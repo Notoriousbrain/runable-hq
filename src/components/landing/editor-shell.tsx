@@ -5,8 +5,8 @@ import Topbar from "./top-bar";
 import Sidebar from "./sidebar";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-const SIDEBAR_WIDTH = 350;
-const TOPBAR_HEIGHT = 80;
+const SIDEBAR_WIDTH = 300;
+const TOPBAR_HEIGHT = 60;
 const CONTENT_SPACING = 8;
 
 export default function EditorShell({ children }: PropsWithChildren) {

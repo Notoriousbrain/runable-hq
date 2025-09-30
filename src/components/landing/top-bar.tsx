@@ -4,7 +4,7 @@ import { Badge } from "../ui/badge";
 
 export default function Topbar() {
   return (
-    <div className="h-20 flex items-center px-3">
+    <div className="h-16 flex items-center px-3">
       <div className="h-12 flex items-center gap-3 px-3">
         <div className="h-5 w-5 rounded grid place-items-center bg-white text-black text-[10px] font-bold">
           R
@@ -13,8 +13,8 @@ export default function Topbar() {
       </div>
 
       <div className="ms-auto flex items-center gap-3">
-        <Badge className="p-2 bg-black border border-white/20">
-          <div className="flex gap-3 items-center">
+        <Badge className="p-2 gap-2 bg-black border border-white/20">
+          <span className="flex gap-3 items-center font-semibold">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -31,11 +31,12 @@ export default function Topbar() {
               <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"></path>
             </svg>
             5000
-          </div>
-          | <span>Upgrade</span>
+          </span>
+          <span>| </span>
+          <span className="text-[#5193cd] font-bold">Upgrade</span>
         </Badge>
 
-        <div className="bg-blue-400 rounded-full py-2 px-4">R</div>
+        <div className="bg-[#5193cd] rounded-full py-2 px-4">R</div>
       </div>
     </div>
   );
