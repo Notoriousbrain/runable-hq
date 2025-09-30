@@ -15,13 +15,6 @@ import {
 export default function Sidebar() {
   return (
     <div className="h-[calc(100dvh-44px)] flex flex-col">
-      <div className="h-12 flex items-center gap-2 px-3 border-b border-white/10">
-        <div className="h-5 w-5 rounded grid place-items-center bg-white text-black text-[10px] font-bold">
-          R
-        </div>
-        <span className="font-medium">Runable</span>
-      </div>
-
       <nav className="p-2 space-y-2 overflow-auto">
         <SidebarItem
           icon={<Plus className="h-4 w-4" />}
