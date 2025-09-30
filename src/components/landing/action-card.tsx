@@ -1,4 +1,5 @@
 "use client";
+
 export default function ActionCard({
   title,
   img,
@@ -7,16 +8,12 @@ export default function ActionCard({
   img: string;
 }) {
   return (
-    <div className="group relative rounded-xl overflow-hidden border border-white/10 bg-white/5">
-      <div className="aspect-[16/10] w-full overflow-hidden">
+    <div className="rounded-xl border border-white/10 bg-[#141415] hover:bg-[#1a1a1b] transition-colors">
+      <div className="aspect-[16/10] w-full overflow-hidden rounded-t-xl">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={img}
-          alt=""
-          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-        />
+        <img src={img} alt="" className="h-full w-full object-cover" />
       </div>
-      <div className="p-3 text-sm font-medium">{title}</div>
+      <div className="px-3 py-2 text-sm font-medium">{title}</div>
     </div>
   );
 }
