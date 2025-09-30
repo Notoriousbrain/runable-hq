@@ -40,12 +40,10 @@ export default function RunableLandingPage() {
   return (
     <EditorShell>
       <div className="mx-auto max-w-6xl px-4 py-8">
-        {/* Title */}
         <h1 className="text-center text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight">
           What can I get done for you?
         </h1>
 
-        {/* Search bar */}
         <div className="mx-auto mt-6 max-w-3xl">
           <div className="rounded-2xl bg-white/5 border border-white/10 p-1.5">
             <div className="flex items-center gap-2 px-3 py-2">
@@ -106,7 +104,6 @@ export default function RunableLandingPage() {
         </div>
       </div>
 
-      {/* Footer strip */}
       <div className="sticky bottom-0 z-10 border-t border-white/10 bg-[#0b0b0c]/80 backdrop-blur">
         <div className="mx-auto max-w-6xl px-4 h-10 text-xs text-white/70 flex items-center justify-center">
           Explore what people are building with Runable
