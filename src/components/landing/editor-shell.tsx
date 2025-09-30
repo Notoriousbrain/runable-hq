@@ -5,41 +5,57 @@ import Topbar from "./top-bar";
 import Sidebar from "./sidebar";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
+const SIDEBAR_WIDTH = 350;
+const TOPBAR_HEIGHT = 80;
+const CONTENT_SPACING = 8;
+
 export default function EditorShell({ children }: PropsWithChildren) {
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
+  const sidebarWidth = sidebarOpen ? SIDEBAR_WIDTH : 0;
 
   return (
-    <div
-      className="min-h-dvh bg-[#010101] text-white grid"
-      style={{ gridTemplateRows: "80px 1fr" }}
-    >
-      <Topbar />
+    <div className="min-h-dvh bg-[#010101] text-white">
+      <div
+        className="fixed inset-x-0 top-0 z-50 bg-[#010101]"
+        style={{ height: TOPBAR_HEIGHT }}
+      >
+        <Topbar />
+      </div>
+
+      <aside
+        className={`fixed left-0 bottom-0 z-40 overflow-hidden transition-[opacity,width] duration-200 ${
+          sidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
+        style={{ top: TOPBAR_HEIGHT, width: sidebarWidth }}
+      >
+        <Sidebar />
+      </aside>
 
       <div
-        className="relative grid"
-        style={{ gridTemplateColumns: sidebarOpen ? "350px 1fr" : "0 1fr" }}
+        className="px-2 pb-2 transition-[margin-left] duration-200"
+        style={{
+          paddingTop: TOPBAR_HEIGHT + CONTENT_SPACING,
+          marginLeft: sidebarWidth,
+        }}
       >
-        <aside
-          className={`${
-            sidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-          } transition-opacity duration-200`}
+        <section
+          className="flex min-w-0 flex-col rounded-2xl border border-white/10 bg-[#0f0f0f]"
+          style={{
+            height: `calc(100dvh - ${TOPBAR_HEIGHT + CONTENT_SPACING * 2}px)`,
+          }}
         >
-          <Sidebar />
-        </aside>
-
-        <section className="min-w-0 bg-[#0f0f0f] border border-white/10 rounded-2xl">
           <button
             aria-label={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
             onClick={() => setSidebarOpen((v) => !v)}
-            className="h-8 w-8 m-4 grid place-items-center rounded-lg border border-white/10 bg-white/5 hover:bg-white/10"
+            className="m-4 grid h-8 w-8 place-items-center rounded-lg border border-white/10 bg-white/5 hover:bg-white/10"
           >
             {sidebarOpen ? (
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft className="size-4" />
             ) : (
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="size-4" />
             )}
           </button>
-          {children}
+          <div className="flex-1 overflow-y-auto">{children}</div>
         </section>
       </div>
     </div>
