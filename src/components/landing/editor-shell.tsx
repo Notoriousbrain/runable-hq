@@ -4,6 +4,7 @@ import {
   createContext,
   useContext,
   useEffect,
+  useRef,
   useState,
   type PropsWithChildren,
 } from "react";
@@ -17,10 +18,13 @@ const SIDEBAR_WIDTH = 300;
 const TOPBAR_HEIGHT = 60;
 const CONTENT_SPACING = 8;
 
+const STORAGE_KEY = "runable.showcase.id";
+const CACHE_KEY = "runable.showcase.cache";
+
 type Ctx = {
   showcaseRecord: ComponentRecord<ShowcaseProps>;
   setShowcaseRecord: React.Dispatch<
-    React.SetStateAction<ComponentRecord<ShowcaseProps> | null>
+    React.SetStateAction<ComponentRecord<ShowcaseProps>>
   >;
 };
 
@@ -32,21 +36,57 @@ export function useShowcaseDoc(): Ctx {
   return ctx;
 }
 
+function safeReadCache(): ComponentRecord<ShowcaseProps> | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem(CACHE_KEY);
+    return raw ? (JSON.parse(raw) as ComponentRecord<ShowcaseProps>) : null;
+  } catch {
+    return null;
+  }
+}
+function safeWriteCache(doc: ComponentRecord<ShowcaseProps>) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(CACHE_KEY, JSON.stringify(doc));
+  } catch {}
+}
+
+const STABLE_DEFAULT_DOC: ComponentRecord<ShowcaseProps> = {
+  id: "local-temp",
+  name: "ShowcaseSection",
+  rev: 0,
+  sourceCode: `export default function Showcase(){return null}`,
+  props: initialShowcaseProps,
+} as ComponentRecord<ShowcaseProps>;
+
 export default function EditorShell({ children }: PropsWithChildren) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const sidebarWidth = sidebarOpen ? SIDEBAR_WIDTH : 0;
 
-  const [doc, setDoc] = useState<ComponentRecord<ShowcaseProps> | null>(null);
+  const [doc, setDoc] =
+    useState<ComponentRecord<ShowcaseProps>>(STABLE_DEFAULT_DOC);
+
   const [error, setError] = useState<string | null>(null);
 
+  const hydratedOnceRef = useRef(false);
+
   useEffect(() => {
+    if (hydratedOnceRef.current) return;
+    hydratedOnceRef.current = true;
+
     let alive = true;
+
     (async () => {
+      const cached = safeReadCache();
+      if (cached && alive) {
+        setDoc(cached);
+      }
+
       try {
-        const storageKey = "runable.showcase.id";
         const storedId =
           typeof window !== "undefined"
-            ? window.localStorage.getItem(storageKey) ?? ""
+            ? window.localStorage.getItem(STORAGE_KEY) ?? ""
             : "";
 
         if (storedId) {
@@ -56,31 +96,30 @@ export default function EditorShell({ children }: PropsWithChildren) {
           return;
         }
 
-        const starter = `export default function Showcase(){return null}`;
         const created = await createComponent<ShowcaseProps>({
           name: "ShowcaseSection",
-          sourceCode: starter,
-          props: initialShowcaseProps,
+          sourceCode: (cached ?? STABLE_DEFAULT_DOC).sourceCode,
+          props: (cached ?? STABLE_DEFAULT_DOC).props,
         });
         if (!alive) return;
         setDoc(created);
         if (typeof window !== "undefined") {
-          window.localStorage.setItem(storageKey, created.id);
+          window.localStorage.setItem(STORAGE_KEY, created.id);
         }
       } catch (e) {
         if (!alive) return;
-        setError(
-          e instanceof Error ? e.message : "Failed to load Showcase doc"
-        );
+        setError(e instanceof Error ? e.message : "Failed to reach server");
       }
     })();
+
     return () => {
       alive = false;
     };
   }, []);
 
-  if (error) return <div className="p-6 text-red-400">{error}</div>;
-  if (!doc) return <div className="p-6">Loading…</div>;
+  useEffect(() => {
+    safeWriteCache(doc);
+  }, [doc]);
 
   const value: Ctx = { showcaseRecord: doc, setShowcaseRecord: setDoc };
 
@@ -130,6 +169,9 @@ export default function EditorShell({ children }: PropsWithChildren) {
 
             <div className="px-4 text-[11px] text-white/50">
               ID: {doc.id} • Rev: {doc.rev}
+              {error ? (
+                <span className="ml-2 text-red-400">• {error}</span>
+              ) : null}
             </div>
 
             <div className="flex-1 overflow-y-auto">{children}</div>

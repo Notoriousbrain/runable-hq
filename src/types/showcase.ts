@@ -10,5 +10,6 @@ export const initialShowcaseProps: ShowcaseProps = {
   headingText: "Explore what people are building with Runable",
   headingColor: "#ffffffb3",
   headingFontSize: 16,
+  headingWeight: 400,
   headingBold: false,
 };
