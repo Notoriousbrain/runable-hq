@@ -15,6 +15,7 @@ import { useShowcaseDoc } from "./editor-shell";
 import { ShowcaseProps } from "@/types";
 import { useAutosave } from "@/hooks/useAutosave";
 import TitleEditor from "../title-header";
+import { writeShowcaseCache } from "@/lib/cache";
 
 const categories: ReadonlyArray<{
   icon: React.ReactNode;
@@ -101,28 +102,38 @@ export default function ShowcaseSection() {
     enabled: true,
     delay: 900,
     onSaved: ({ rev }) =>
-      setShowcaseRecord((prev) => (prev ? { ...prev, rev } : prev)),
+      setShowcaseRecord((prev) => {
+        if (!prev) return prev as never;
+        const next = { ...prev, rev };
+        writeShowcaseCache(next);
+        return next;
+      }),
     onConflict: ({ rev, props }) => {
-      const serverProps = props as ShowcaseProps;
-      setShowcaseRecord((prev) =>
-        prev ? { ...prev, rev, props: serverProps } : prev
-      );
+      setShowcaseRecord((prev) => {
+        if (!prev) return prev as never;
+        const next = { ...prev, rev, props: props as ShowcaseProps };
+        writeShowcaseCache(next); // ⬅️ write-through
+        return next;
+      });
     },
   });
 
-  function onEdit(next: ShowcaseProps) {
-    setShowcaseRecord((prev) => (prev ? { ...prev, props: next } : prev));
+  function onEdit(nextProps: ShowcaseProps) {
+    setShowcaseRecord((prev) => {
+      if (!prev) return prev as never;
+      const next = { ...prev, props: nextProps };
+      writeShowcaseCache(next);
+      return next;
+    });
   }
+
+  const p = showcaseRecord.props;
 
   return (
     <section className="mx-auto max-w-6xl px-4 my-12">
       <div className="relative flex items-center justify-center">
         <div className="hidden lg:flex h-px w-full bg-white/10" />
-        <TitleEditor
-          token="showcase"
-          value={showcaseRecord.props}
-          onChange={onEdit}
-        />
+        <TitleEditor token="showcase" value={p} onChange={onEdit} />
         <div className="hidden lg:flex h-px w-full bg-white/10" />
       </div>
       <div className="mt-12 overflow-x-auto">

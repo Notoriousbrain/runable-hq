@@ -12,6 +12,7 @@ import ActionCard from "./action-card";
 import { useShowcaseDoc } from "./editor-shell";
 import { ShowcaseProps } from "@/types";
 import TitleEditor from "../title-header";
+import { writeShowcaseCache } from "@/lib/cache";
 
 const HeroSection = () => {
   const cards: ReadonlyArray<{ title: string; img: string }> = [
@@ -47,8 +48,13 @@ const HeroSection = () => {
 
   const { showcaseRecord, setShowcaseRecord } = useShowcaseDoc();
 
-  function onEdit(next: ShowcaseProps) {
-    setShowcaseRecord((prev) => (prev ? { ...prev, props: next } : prev));
+  function onEdit(nextProps: ShowcaseProps) {
+    setShowcaseRecord((prev) => {
+      if (!prev) return prev as never;
+      const next = { ...prev, props: nextProps };
+      writeShowcaseCache(next);
+      return next;
+    });
   }
 
   return (

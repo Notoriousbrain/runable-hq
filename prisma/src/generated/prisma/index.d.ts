@@ -18,6 +18,11 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
  * 
  */
 export type Component = $Result.DefaultSelection<Prisma.$ComponentPayload>
+/**
+ * Model ComponentVersion
+ * 
+ */
+export type ComponentVersion = $Result.DefaultSelection<Prisma.$ComponentVersionPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -146,6 +151,16 @@ export class PrismaClient<
     * ```
     */
   get component(): Prisma.ComponentDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.componentVersion`: Exposes CRUD operations for the **ComponentVersion** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ComponentVersions
+    * const componentVersions = await prisma.componentVersion.findMany()
+    * ```
+    */
+  get componentVersion(): Prisma.ComponentVersionDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -586,7 +601,8 @@ export namespace Prisma {
 
 
   export const ModelName: {
-    Component: 'Component'
+    Component: 'Component',
+    ComponentVersion: 'ComponentVersion'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -605,7 +621,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "component"
+      modelProps: "component" | "componentVersion"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -680,6 +696,80 @@ export namespace Prisma {
           count: {
             args: Prisma.ComponentCountArgs<ExtArgs>
             result: $Utils.Optional<ComponentCountAggregateOutputType> | number
+          }
+        }
+      }
+      ComponentVersion: {
+        payload: Prisma.$ComponentVersionPayload<ExtArgs>
+        fields: Prisma.ComponentVersionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ComponentVersionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComponentVersionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ComponentVersionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComponentVersionPayload>
+          }
+          findFirst: {
+            args: Prisma.ComponentVersionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComponentVersionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ComponentVersionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComponentVersionPayload>
+          }
+          findMany: {
+            args: Prisma.ComponentVersionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComponentVersionPayload>[]
+          }
+          create: {
+            args: Prisma.ComponentVersionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComponentVersionPayload>
+          }
+          createMany: {
+            args: Prisma.ComponentVersionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ComponentVersionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComponentVersionPayload>[]
+          }
+          delete: {
+            args: Prisma.ComponentVersionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComponentVersionPayload>
+          }
+          update: {
+            args: Prisma.ComponentVersionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComponentVersionPayload>
+          }
+          deleteMany: {
+            args: Prisma.ComponentVersionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ComponentVersionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ComponentVersionUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComponentVersionPayload>[]
+          }
+          upsert: {
+            args: Prisma.ComponentVersionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ComponentVersionPayload>
+          }
+          aggregate: {
+            args: Prisma.ComponentVersionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateComponentVersion>
+          }
+          groupBy: {
+            args: Prisma.ComponentVersionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ComponentVersionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ComponentVersionCountArgs<ExtArgs>
+            result: $Utils.Optional<ComponentVersionCountAggregateOutputType> | number
           }
         }
       }
@@ -780,6 +870,7 @@ export namespace Prisma {
   }
   export type GlobalOmitConfig = {
     component?: ComponentOmit
+    componentVersion?: ComponentVersionOmit
   }
 
   /* Types for Logging */
@@ -874,18 +965,20 @@ export namespace Prisma {
 
   export type ComponentAvgAggregateOutputType = {
     rev: number | null
+    schemaVer: number | null
   }
 
   export type ComponentSumAggregateOutputType = {
     rev: number | null
+    schemaVer: number | null
   }
 
   export type ComponentMinAggregateOutputType = {
     id: string | null
     name: string | null
     sourceCode: string | null
-    propsJson: string | null
     rev: number | null
+    schemaVer: number | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -894,8 +987,8 @@ export namespace Prisma {
     id: string | null
     name: string | null
     sourceCode: string | null
-    propsJson: string | null
     rev: number | null
+    schemaVer: number | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -904,8 +997,9 @@ export namespace Prisma {
     id: number
     name: number
     sourceCode: number
-    propsJson: number
+    props: number
     rev: number
+    schemaVer: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -914,18 +1008,20 @@ export namespace Prisma {
 
   export type ComponentAvgAggregateInputType = {
     rev?: true
+    schemaVer?: true
   }
 
   export type ComponentSumAggregateInputType = {
     rev?: true
+    schemaVer?: true
   }
 
   export type ComponentMinAggregateInputType = {
     id?: true
     name?: true
     sourceCode?: true
-    propsJson?: true
     rev?: true
+    schemaVer?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -934,8 +1030,8 @@ export namespace Prisma {
     id?: true
     name?: true
     sourceCode?: true
-    propsJson?: true
     rev?: true
+    schemaVer?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -944,8 +1040,9 @@ export namespace Prisma {
     id?: true
     name?: true
     sourceCode?: true
-    propsJson?: true
+    props?: true
     rev?: true
+    schemaVer?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -1041,8 +1138,9 @@ export namespace Prisma {
     id: string
     name: string
     sourceCode: string
-    propsJson: string
+    props: JsonValue
     rev: number
+    schemaVer: number
     createdAt: Date
     updatedAt: Date
     _count: ComponentCountAggregateOutputType | null
@@ -1070,8 +1168,9 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     sourceCode?: boolean
-    propsJson?: boolean
+    props?: boolean
     rev?: boolean
+    schemaVer?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["component"]>
@@ -1080,8 +1179,9 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     sourceCode?: boolean
-    propsJson?: boolean
+    props?: boolean
     rev?: boolean
+    schemaVer?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["component"]>
@@ -1090,8 +1190,9 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     sourceCode?: boolean
-    propsJson?: boolean
+    props?: boolean
     rev?: boolean
+    schemaVer?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["component"]>
@@ -1100,13 +1201,14 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     sourceCode?: boolean
-    propsJson?: boolean
+    props?: boolean
     rev?: boolean
+    schemaVer?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type ComponentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "sourceCode" | "propsJson" | "rev" | "createdAt" | "updatedAt", ExtArgs["result"]["component"]>
+  export type ComponentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "sourceCode" | "props" | "rev" | "schemaVer" | "createdAt" | "updatedAt", ExtArgs["result"]["component"]>
 
   export type $ComponentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Component"
@@ -1115,8 +1217,9 @@ export namespace Prisma {
       id: string
       name: string
       sourceCode: string
-      propsJson: string
+      props: Prisma.JsonValue
       rev: number
+      schemaVer: number
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["component"]>
@@ -1545,8 +1648,9 @@ export namespace Prisma {
     readonly id: FieldRef<"Component", 'String'>
     readonly name: FieldRef<"Component", 'String'>
     readonly sourceCode: FieldRef<"Component", 'String'>
-    readonly propsJson: FieldRef<"Component", 'String'>
+    readonly props: FieldRef<"Component", 'Json'>
     readonly rev: FieldRef<"Component", 'Int'>
+    readonly schemaVer: FieldRef<"Component", 'Int'>
     readonly createdAt: FieldRef<"Component", 'DateTime'>
     readonly updatedAt: FieldRef<"Component", 'DateTime'>
   }
@@ -1916,6 +2020,1044 @@ export namespace Prisma {
 
 
   /**
+   * Model ComponentVersion
+   */
+
+  export type AggregateComponentVersion = {
+    _count: ComponentVersionCountAggregateOutputType | null
+    _avg: ComponentVersionAvgAggregateOutputType | null
+    _sum: ComponentVersionSumAggregateOutputType | null
+    _min: ComponentVersionMinAggregateOutputType | null
+    _max: ComponentVersionMaxAggregateOutputType | null
+  }
+
+  export type ComponentVersionAvgAggregateOutputType = {
+    rev: number | null
+  }
+
+  export type ComponentVersionSumAggregateOutputType = {
+    rev: number | null
+  }
+
+  export type ComponentVersionMinAggregateOutputType = {
+    id: string | null
+    componentId: string | null
+    rev: number | null
+    sourceCode: string | null
+    createdAt: Date | null
+  }
+
+  export type ComponentVersionMaxAggregateOutputType = {
+    id: string | null
+    componentId: string | null
+    rev: number | null
+    sourceCode: string | null
+    createdAt: Date | null
+  }
+
+  export type ComponentVersionCountAggregateOutputType = {
+    id: number
+    componentId: number
+    rev: number
+    sourceCode: number
+    props: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type ComponentVersionAvgAggregateInputType = {
+    rev?: true
+  }
+
+  export type ComponentVersionSumAggregateInputType = {
+    rev?: true
+  }
+
+  export type ComponentVersionMinAggregateInputType = {
+    id?: true
+    componentId?: true
+    rev?: true
+    sourceCode?: true
+    createdAt?: true
+  }
+
+  export type ComponentVersionMaxAggregateInputType = {
+    id?: true
+    componentId?: true
+    rev?: true
+    sourceCode?: true
+    createdAt?: true
+  }
+
+  export type ComponentVersionCountAggregateInputType = {
+    id?: true
+    componentId?: true
+    rev?: true
+    sourceCode?: true
+    props?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type ComponentVersionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ComponentVersion to aggregate.
+     */
+    where?: ComponentVersionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ComponentVersions to fetch.
+     */
+    orderBy?: ComponentVersionOrderByWithRelationInput | ComponentVersionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ComponentVersionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ComponentVersions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ComponentVersions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ComponentVersions
+    **/
+    _count?: true | ComponentVersionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ComponentVersionAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ComponentVersionSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ComponentVersionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ComponentVersionMaxAggregateInputType
+  }
+
+  export type GetComponentVersionAggregateType<T extends ComponentVersionAggregateArgs> = {
+        [P in keyof T & keyof AggregateComponentVersion]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateComponentVersion[P]>
+      : GetScalarType<T[P], AggregateComponentVersion[P]>
+  }
+
+
+
+
+  export type ComponentVersionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ComponentVersionWhereInput
+    orderBy?: ComponentVersionOrderByWithAggregationInput | ComponentVersionOrderByWithAggregationInput[]
+    by: ComponentVersionScalarFieldEnum[] | ComponentVersionScalarFieldEnum
+    having?: ComponentVersionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ComponentVersionCountAggregateInputType | true
+    _avg?: ComponentVersionAvgAggregateInputType
+    _sum?: ComponentVersionSumAggregateInputType
+    _min?: ComponentVersionMinAggregateInputType
+    _max?: ComponentVersionMaxAggregateInputType
+  }
+
+  export type ComponentVersionGroupByOutputType = {
+    id: string
+    componentId: string
+    rev: number
+    sourceCode: string
+    props: JsonValue
+    createdAt: Date
+    _count: ComponentVersionCountAggregateOutputType | null
+    _avg: ComponentVersionAvgAggregateOutputType | null
+    _sum: ComponentVersionSumAggregateOutputType | null
+    _min: ComponentVersionMinAggregateOutputType | null
+    _max: ComponentVersionMaxAggregateOutputType | null
+  }
+
+  type GetComponentVersionGroupByPayload<T extends ComponentVersionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ComponentVersionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ComponentVersionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ComponentVersionGroupByOutputType[P]>
+            : GetScalarType<T[P], ComponentVersionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ComponentVersionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    componentId?: boolean
+    rev?: boolean
+    sourceCode?: boolean
+    props?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["componentVersion"]>
+
+  export type ComponentVersionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    componentId?: boolean
+    rev?: boolean
+    sourceCode?: boolean
+    props?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["componentVersion"]>
+
+  export type ComponentVersionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    componentId?: boolean
+    rev?: boolean
+    sourceCode?: boolean
+    props?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["componentVersion"]>
+
+  export type ComponentVersionSelectScalar = {
+    id?: boolean
+    componentId?: boolean
+    rev?: boolean
+    sourceCode?: boolean
+    props?: boolean
+    createdAt?: boolean
+  }
+
+  export type ComponentVersionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "componentId" | "rev" | "sourceCode" | "props" | "createdAt", ExtArgs["result"]["componentVersion"]>
+
+  export type $ComponentVersionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ComponentVersion"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      componentId: string
+      rev: number
+      sourceCode: string
+      props: Prisma.JsonValue
+      createdAt: Date
+    }, ExtArgs["result"]["componentVersion"]>
+    composites: {}
+  }
+
+  type ComponentVersionGetPayload<S extends boolean | null | undefined | ComponentVersionDefaultArgs> = $Result.GetResult<Prisma.$ComponentVersionPayload, S>
+
+  type ComponentVersionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ComponentVersionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ComponentVersionCountAggregateInputType | true
+    }
+
+  export interface ComponentVersionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ComponentVersion'], meta: { name: 'ComponentVersion' } }
+    /**
+     * Find zero or one ComponentVersion that matches the filter.
+     * @param {ComponentVersionFindUniqueArgs} args - Arguments to find a ComponentVersion
+     * @example
+     * // Get one ComponentVersion
+     * const componentVersion = await prisma.componentVersion.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ComponentVersionFindUniqueArgs>(args: SelectSubset<T, ComponentVersionFindUniqueArgs<ExtArgs>>): Prisma__ComponentVersionClient<$Result.GetResult<Prisma.$ComponentVersionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ComponentVersion that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ComponentVersionFindUniqueOrThrowArgs} args - Arguments to find a ComponentVersion
+     * @example
+     * // Get one ComponentVersion
+     * const componentVersion = await prisma.componentVersion.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ComponentVersionFindUniqueOrThrowArgs>(args: SelectSubset<T, ComponentVersionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ComponentVersionClient<$Result.GetResult<Prisma.$ComponentVersionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ComponentVersion that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ComponentVersionFindFirstArgs} args - Arguments to find a ComponentVersion
+     * @example
+     * // Get one ComponentVersion
+     * const componentVersion = await prisma.componentVersion.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ComponentVersionFindFirstArgs>(args?: SelectSubset<T, ComponentVersionFindFirstArgs<ExtArgs>>): Prisma__ComponentVersionClient<$Result.GetResult<Prisma.$ComponentVersionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ComponentVersion that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ComponentVersionFindFirstOrThrowArgs} args - Arguments to find a ComponentVersion
+     * @example
+     * // Get one ComponentVersion
+     * const componentVersion = await prisma.componentVersion.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ComponentVersionFindFirstOrThrowArgs>(args?: SelectSubset<T, ComponentVersionFindFirstOrThrowArgs<ExtArgs>>): Prisma__ComponentVersionClient<$Result.GetResult<Prisma.$ComponentVersionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ComponentVersions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ComponentVersionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ComponentVersions
+     * const componentVersions = await prisma.componentVersion.findMany()
+     * 
+     * // Get first 10 ComponentVersions
+     * const componentVersions = await prisma.componentVersion.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const componentVersionWithIdOnly = await prisma.componentVersion.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ComponentVersionFindManyArgs>(args?: SelectSubset<T, ComponentVersionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ComponentVersionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ComponentVersion.
+     * @param {ComponentVersionCreateArgs} args - Arguments to create a ComponentVersion.
+     * @example
+     * // Create one ComponentVersion
+     * const ComponentVersion = await prisma.componentVersion.create({
+     *   data: {
+     *     // ... data to create a ComponentVersion
+     *   }
+     * })
+     * 
+     */
+    create<T extends ComponentVersionCreateArgs>(args: SelectSubset<T, ComponentVersionCreateArgs<ExtArgs>>): Prisma__ComponentVersionClient<$Result.GetResult<Prisma.$ComponentVersionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ComponentVersions.
+     * @param {ComponentVersionCreateManyArgs} args - Arguments to create many ComponentVersions.
+     * @example
+     * // Create many ComponentVersions
+     * const componentVersion = await prisma.componentVersion.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ComponentVersionCreateManyArgs>(args?: SelectSubset<T, ComponentVersionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ComponentVersions and returns the data saved in the database.
+     * @param {ComponentVersionCreateManyAndReturnArgs} args - Arguments to create many ComponentVersions.
+     * @example
+     * // Create many ComponentVersions
+     * const componentVersion = await prisma.componentVersion.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ComponentVersions and only return the `id`
+     * const componentVersionWithIdOnly = await prisma.componentVersion.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ComponentVersionCreateManyAndReturnArgs>(args?: SelectSubset<T, ComponentVersionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ComponentVersionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ComponentVersion.
+     * @param {ComponentVersionDeleteArgs} args - Arguments to delete one ComponentVersion.
+     * @example
+     * // Delete one ComponentVersion
+     * const ComponentVersion = await prisma.componentVersion.delete({
+     *   where: {
+     *     // ... filter to delete one ComponentVersion
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ComponentVersionDeleteArgs>(args: SelectSubset<T, ComponentVersionDeleteArgs<ExtArgs>>): Prisma__ComponentVersionClient<$Result.GetResult<Prisma.$ComponentVersionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ComponentVersion.
+     * @param {ComponentVersionUpdateArgs} args - Arguments to update one ComponentVersion.
+     * @example
+     * // Update one ComponentVersion
+     * const componentVersion = await prisma.componentVersion.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ComponentVersionUpdateArgs>(args: SelectSubset<T, ComponentVersionUpdateArgs<ExtArgs>>): Prisma__ComponentVersionClient<$Result.GetResult<Prisma.$ComponentVersionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ComponentVersions.
+     * @param {ComponentVersionDeleteManyArgs} args - Arguments to filter ComponentVersions to delete.
+     * @example
+     * // Delete a few ComponentVersions
+     * const { count } = await prisma.componentVersion.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ComponentVersionDeleteManyArgs>(args?: SelectSubset<T, ComponentVersionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ComponentVersions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ComponentVersionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ComponentVersions
+     * const componentVersion = await prisma.componentVersion.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ComponentVersionUpdateManyArgs>(args: SelectSubset<T, ComponentVersionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ComponentVersions and returns the data updated in the database.
+     * @param {ComponentVersionUpdateManyAndReturnArgs} args - Arguments to update many ComponentVersions.
+     * @example
+     * // Update many ComponentVersions
+     * const componentVersion = await prisma.componentVersion.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ComponentVersions and only return the `id`
+     * const componentVersionWithIdOnly = await prisma.componentVersion.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ComponentVersionUpdateManyAndReturnArgs>(args: SelectSubset<T, ComponentVersionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ComponentVersionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ComponentVersion.
+     * @param {ComponentVersionUpsertArgs} args - Arguments to update or create a ComponentVersion.
+     * @example
+     * // Update or create a ComponentVersion
+     * const componentVersion = await prisma.componentVersion.upsert({
+     *   create: {
+     *     // ... data to create a ComponentVersion
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ComponentVersion we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ComponentVersionUpsertArgs>(args: SelectSubset<T, ComponentVersionUpsertArgs<ExtArgs>>): Prisma__ComponentVersionClient<$Result.GetResult<Prisma.$ComponentVersionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ComponentVersions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ComponentVersionCountArgs} args - Arguments to filter ComponentVersions to count.
+     * @example
+     * // Count the number of ComponentVersions
+     * const count = await prisma.componentVersion.count({
+     *   where: {
+     *     // ... the filter for the ComponentVersions we want to count
+     *   }
+     * })
+    **/
+    count<T extends ComponentVersionCountArgs>(
+      args?: Subset<T, ComponentVersionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ComponentVersionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ComponentVersion.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ComponentVersionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ComponentVersionAggregateArgs>(args: Subset<T, ComponentVersionAggregateArgs>): Prisma.PrismaPromise<GetComponentVersionAggregateType<T>>
+
+    /**
+     * Group by ComponentVersion.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ComponentVersionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ComponentVersionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ComponentVersionGroupByArgs['orderBy'] }
+        : { orderBy?: ComponentVersionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ComponentVersionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetComponentVersionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ComponentVersion model
+   */
+  readonly fields: ComponentVersionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ComponentVersion.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ComponentVersionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ComponentVersion model
+   */
+  interface ComponentVersionFieldRefs {
+    readonly id: FieldRef<"ComponentVersion", 'String'>
+    readonly componentId: FieldRef<"ComponentVersion", 'String'>
+    readonly rev: FieldRef<"ComponentVersion", 'Int'>
+    readonly sourceCode: FieldRef<"ComponentVersion", 'String'>
+    readonly props: FieldRef<"ComponentVersion", 'Json'>
+    readonly createdAt: FieldRef<"ComponentVersion", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ComponentVersion findUnique
+   */
+  export type ComponentVersionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComponentVersion
+     */
+    select?: ComponentVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComponentVersion
+     */
+    omit?: ComponentVersionOmit<ExtArgs> | null
+    /**
+     * Filter, which ComponentVersion to fetch.
+     */
+    where: ComponentVersionWhereUniqueInput
+  }
+
+  /**
+   * ComponentVersion findUniqueOrThrow
+   */
+  export type ComponentVersionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComponentVersion
+     */
+    select?: ComponentVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComponentVersion
+     */
+    omit?: ComponentVersionOmit<ExtArgs> | null
+    /**
+     * Filter, which ComponentVersion to fetch.
+     */
+    where: ComponentVersionWhereUniqueInput
+  }
+
+  /**
+   * ComponentVersion findFirst
+   */
+  export type ComponentVersionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComponentVersion
+     */
+    select?: ComponentVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComponentVersion
+     */
+    omit?: ComponentVersionOmit<ExtArgs> | null
+    /**
+     * Filter, which ComponentVersion to fetch.
+     */
+    where?: ComponentVersionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ComponentVersions to fetch.
+     */
+    orderBy?: ComponentVersionOrderByWithRelationInput | ComponentVersionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ComponentVersions.
+     */
+    cursor?: ComponentVersionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ComponentVersions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ComponentVersions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ComponentVersions.
+     */
+    distinct?: ComponentVersionScalarFieldEnum | ComponentVersionScalarFieldEnum[]
+  }
+
+  /**
+   * ComponentVersion findFirstOrThrow
+   */
+  export type ComponentVersionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComponentVersion
+     */
+    select?: ComponentVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComponentVersion
+     */
+    omit?: ComponentVersionOmit<ExtArgs> | null
+    /**
+     * Filter, which ComponentVersion to fetch.
+     */
+    where?: ComponentVersionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ComponentVersions to fetch.
+     */
+    orderBy?: ComponentVersionOrderByWithRelationInput | ComponentVersionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ComponentVersions.
+     */
+    cursor?: ComponentVersionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ComponentVersions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ComponentVersions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ComponentVersions.
+     */
+    distinct?: ComponentVersionScalarFieldEnum | ComponentVersionScalarFieldEnum[]
+  }
+
+  /**
+   * ComponentVersion findMany
+   */
+  export type ComponentVersionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComponentVersion
+     */
+    select?: ComponentVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComponentVersion
+     */
+    omit?: ComponentVersionOmit<ExtArgs> | null
+    /**
+     * Filter, which ComponentVersions to fetch.
+     */
+    where?: ComponentVersionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ComponentVersions to fetch.
+     */
+    orderBy?: ComponentVersionOrderByWithRelationInput | ComponentVersionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ComponentVersions.
+     */
+    cursor?: ComponentVersionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ComponentVersions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ComponentVersions.
+     */
+    skip?: number
+    distinct?: ComponentVersionScalarFieldEnum | ComponentVersionScalarFieldEnum[]
+  }
+
+  /**
+   * ComponentVersion create
+   */
+  export type ComponentVersionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComponentVersion
+     */
+    select?: ComponentVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComponentVersion
+     */
+    omit?: ComponentVersionOmit<ExtArgs> | null
+    /**
+     * The data needed to create a ComponentVersion.
+     */
+    data: XOR<ComponentVersionCreateInput, ComponentVersionUncheckedCreateInput>
+  }
+
+  /**
+   * ComponentVersion createMany
+   */
+  export type ComponentVersionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ComponentVersions.
+     */
+    data: ComponentVersionCreateManyInput | ComponentVersionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ComponentVersion createManyAndReturn
+   */
+  export type ComponentVersionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComponentVersion
+     */
+    select?: ComponentVersionSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComponentVersion
+     */
+    omit?: ComponentVersionOmit<ExtArgs> | null
+    /**
+     * The data used to create many ComponentVersions.
+     */
+    data: ComponentVersionCreateManyInput | ComponentVersionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ComponentVersion update
+   */
+  export type ComponentVersionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComponentVersion
+     */
+    select?: ComponentVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComponentVersion
+     */
+    omit?: ComponentVersionOmit<ExtArgs> | null
+    /**
+     * The data needed to update a ComponentVersion.
+     */
+    data: XOR<ComponentVersionUpdateInput, ComponentVersionUncheckedUpdateInput>
+    /**
+     * Choose, which ComponentVersion to update.
+     */
+    where: ComponentVersionWhereUniqueInput
+  }
+
+  /**
+   * ComponentVersion updateMany
+   */
+  export type ComponentVersionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ComponentVersions.
+     */
+    data: XOR<ComponentVersionUpdateManyMutationInput, ComponentVersionUncheckedUpdateManyInput>
+    /**
+     * Filter which ComponentVersions to update
+     */
+    where?: ComponentVersionWhereInput
+    /**
+     * Limit how many ComponentVersions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ComponentVersion updateManyAndReturn
+   */
+  export type ComponentVersionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComponentVersion
+     */
+    select?: ComponentVersionSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComponentVersion
+     */
+    omit?: ComponentVersionOmit<ExtArgs> | null
+    /**
+     * The data used to update ComponentVersions.
+     */
+    data: XOR<ComponentVersionUpdateManyMutationInput, ComponentVersionUncheckedUpdateManyInput>
+    /**
+     * Filter which ComponentVersions to update
+     */
+    where?: ComponentVersionWhereInput
+    /**
+     * Limit how many ComponentVersions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ComponentVersion upsert
+   */
+  export type ComponentVersionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComponentVersion
+     */
+    select?: ComponentVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComponentVersion
+     */
+    omit?: ComponentVersionOmit<ExtArgs> | null
+    /**
+     * The filter to search for the ComponentVersion to update in case it exists.
+     */
+    where: ComponentVersionWhereUniqueInput
+    /**
+     * In case the ComponentVersion found by the `where` argument doesn't exist, create a new ComponentVersion with this data.
+     */
+    create: XOR<ComponentVersionCreateInput, ComponentVersionUncheckedCreateInput>
+    /**
+     * In case the ComponentVersion was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ComponentVersionUpdateInput, ComponentVersionUncheckedUpdateInput>
+  }
+
+  /**
+   * ComponentVersion delete
+   */
+  export type ComponentVersionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComponentVersion
+     */
+    select?: ComponentVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComponentVersion
+     */
+    omit?: ComponentVersionOmit<ExtArgs> | null
+    /**
+     * Filter which ComponentVersion to delete.
+     */
+    where: ComponentVersionWhereUniqueInput
+  }
+
+  /**
+   * ComponentVersion deleteMany
+   */
+  export type ComponentVersionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ComponentVersions to delete
+     */
+    where?: ComponentVersionWhereInput
+    /**
+     * Limit how many ComponentVersions to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ComponentVersion without action
+   */
+  export type ComponentVersionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ComponentVersion
+     */
+    select?: ComponentVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ComponentVersion
+     */
+    omit?: ComponentVersionOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -1933,13 +3075,26 @@ export namespace Prisma {
     id: 'id',
     name: 'name',
     sourceCode: 'sourceCode',
-    propsJson: 'propsJson',
+    props: 'props',
     rev: 'rev',
+    schemaVer: 'schemaVer',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
 
   export type ComponentScalarFieldEnum = (typeof ComponentScalarFieldEnum)[keyof typeof ComponentScalarFieldEnum]
+
+
+  export const ComponentVersionScalarFieldEnum: {
+    id: 'id',
+    componentId: 'componentId',
+    rev: 'rev',
+    sourceCode: 'sourceCode',
+    props: 'props',
+    createdAt: 'createdAt'
+  };
+
+  export type ComponentVersionScalarFieldEnum = (typeof ComponentVersionScalarFieldEnum)[keyof typeof ComponentVersionScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -1950,12 +3105,28 @@ export namespace Prisma {
   export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+  export const JsonNullValueInput: {
+    JsonNull: typeof JsonNull
+  };
+
+  export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
   export const QueryMode: {
     default: 'default',
     insensitive: 'insensitive'
   };
 
   export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+  export const JsonNullValueFilter: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull,
+    AnyNull: typeof AnyNull
+  };
+
+  export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
   /**
@@ -1974,6 +3145,20 @@ export namespace Prisma {
    * Reference to a field of type 'String[]'
    */
   export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Json'
+   */
+  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+  /**
+   * Reference to a field of type 'QueryMode'
+   */
+  export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
 
 
@@ -2029,8 +3214,9 @@ export namespace Prisma {
     id?: StringFilter<"Component"> | string
     name?: StringFilter<"Component"> | string
     sourceCode?: StringFilter<"Component"> | string
-    propsJson?: StringFilter<"Component"> | string
+    props?: JsonFilter<"Component">
     rev?: IntFilter<"Component"> | number
+    schemaVer?: IntFilter<"Component"> | number
     createdAt?: DateTimeFilter<"Component"> | Date | string
     updatedAt?: DateTimeFilter<"Component"> | Date | string
   }
@@ -2039,8 +3225,9 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     sourceCode?: SortOrder
-    propsJson?: SortOrder
+    props?: SortOrder
     rev?: SortOrder
+    schemaVer?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -2052,8 +3239,9 @@ export namespace Prisma {
     NOT?: ComponentWhereInput | ComponentWhereInput[]
     name?: StringFilter<"Component"> | string
     sourceCode?: StringFilter<"Component"> | string
-    propsJson?: StringFilter<"Component"> | string
+    props?: JsonFilter<"Component">
     rev?: IntFilter<"Component"> | number
+    schemaVer?: IntFilter<"Component"> | number
     createdAt?: DateTimeFilter<"Component"> | Date | string
     updatedAt?: DateTimeFilter<"Component"> | Date | string
   }, "id">
@@ -2062,8 +3250,9 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     sourceCode?: SortOrder
-    propsJson?: SortOrder
+    props?: SortOrder
     rev?: SortOrder
+    schemaVer?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: ComponentCountOrderByAggregateInput
@@ -2080,18 +3269,79 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Component"> | string
     name?: StringWithAggregatesFilter<"Component"> | string
     sourceCode?: StringWithAggregatesFilter<"Component"> | string
-    propsJson?: StringWithAggregatesFilter<"Component"> | string
+    props?: JsonWithAggregatesFilter<"Component">
     rev?: IntWithAggregatesFilter<"Component"> | number
+    schemaVer?: IntWithAggregatesFilter<"Component"> | number
     createdAt?: DateTimeWithAggregatesFilter<"Component"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Component"> | Date | string
+  }
+
+  export type ComponentVersionWhereInput = {
+    AND?: ComponentVersionWhereInput | ComponentVersionWhereInput[]
+    OR?: ComponentVersionWhereInput[]
+    NOT?: ComponentVersionWhereInput | ComponentVersionWhereInput[]
+    id?: StringFilter<"ComponentVersion"> | string
+    componentId?: StringFilter<"ComponentVersion"> | string
+    rev?: IntFilter<"ComponentVersion"> | number
+    sourceCode?: StringFilter<"ComponentVersion"> | string
+    props?: JsonFilter<"ComponentVersion">
+    createdAt?: DateTimeFilter<"ComponentVersion"> | Date | string
+  }
+
+  export type ComponentVersionOrderByWithRelationInput = {
+    id?: SortOrder
+    componentId?: SortOrder
+    rev?: SortOrder
+    sourceCode?: SortOrder
+    props?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ComponentVersionWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: ComponentVersionWhereInput | ComponentVersionWhereInput[]
+    OR?: ComponentVersionWhereInput[]
+    NOT?: ComponentVersionWhereInput | ComponentVersionWhereInput[]
+    componentId?: StringFilter<"ComponentVersion"> | string
+    rev?: IntFilter<"ComponentVersion"> | number
+    sourceCode?: StringFilter<"ComponentVersion"> | string
+    props?: JsonFilter<"ComponentVersion">
+    createdAt?: DateTimeFilter<"ComponentVersion"> | Date | string
+  }, "id">
+
+  export type ComponentVersionOrderByWithAggregationInput = {
+    id?: SortOrder
+    componentId?: SortOrder
+    rev?: SortOrder
+    sourceCode?: SortOrder
+    props?: SortOrder
+    createdAt?: SortOrder
+    _count?: ComponentVersionCountOrderByAggregateInput
+    _avg?: ComponentVersionAvgOrderByAggregateInput
+    _max?: ComponentVersionMaxOrderByAggregateInput
+    _min?: ComponentVersionMinOrderByAggregateInput
+    _sum?: ComponentVersionSumOrderByAggregateInput
+  }
+
+  export type ComponentVersionScalarWhereWithAggregatesInput = {
+    AND?: ComponentVersionScalarWhereWithAggregatesInput | ComponentVersionScalarWhereWithAggregatesInput[]
+    OR?: ComponentVersionScalarWhereWithAggregatesInput[]
+    NOT?: ComponentVersionScalarWhereWithAggregatesInput | ComponentVersionScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ComponentVersion"> | string
+    componentId?: StringWithAggregatesFilter<"ComponentVersion"> | string
+    rev?: IntWithAggregatesFilter<"ComponentVersion"> | number
+    sourceCode?: StringWithAggregatesFilter<"ComponentVersion"> | string
+    props?: JsonWithAggregatesFilter<"ComponentVersion">
+    createdAt?: DateTimeWithAggregatesFilter<"ComponentVersion"> | Date | string
   }
 
   export type ComponentCreateInput = {
     id?: string
     name?: string
     sourceCode: string
-    propsJson?: string
+    props?: JsonNullValueInput | InputJsonValue
     rev?: number
+    schemaVer?: number
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -2100,8 +3350,9 @@ export namespace Prisma {
     id?: string
     name?: string
     sourceCode: string
-    propsJson?: string
+    props?: JsonNullValueInput | InputJsonValue
     rev?: number
+    schemaVer?: number
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -2110,8 +3361,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     sourceCode?: StringFieldUpdateOperationsInput | string
-    propsJson?: StringFieldUpdateOperationsInput | string
+    props?: JsonNullValueInput | InputJsonValue
     rev?: IntFieldUpdateOperationsInput | number
+    schemaVer?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -2120,8 +3372,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     sourceCode?: StringFieldUpdateOperationsInput | string
-    propsJson?: StringFieldUpdateOperationsInput | string
+    props?: JsonNullValueInput | InputJsonValue
     rev?: IntFieldUpdateOperationsInput | number
+    schemaVer?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -2130,8 +3383,9 @@ export namespace Prisma {
     id?: string
     name?: string
     sourceCode: string
-    propsJson?: string
+    props?: JsonNullValueInput | InputJsonValue
     rev?: number
+    schemaVer?: number
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -2140,8 +3394,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     sourceCode?: StringFieldUpdateOperationsInput | string
-    propsJson?: StringFieldUpdateOperationsInput | string
+    props?: JsonNullValueInput | InputJsonValue
     rev?: IntFieldUpdateOperationsInput | number
+    schemaVer?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -2150,10 +3405,74 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     sourceCode?: StringFieldUpdateOperationsInput | string
-    propsJson?: StringFieldUpdateOperationsInput | string
+    props?: JsonNullValueInput | InputJsonValue
     rev?: IntFieldUpdateOperationsInput | number
+    schemaVer?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ComponentVersionCreateInput = {
+    id?: string
+    componentId: string
+    rev: number
+    sourceCode: string
+    props: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type ComponentVersionUncheckedCreateInput = {
+    id?: string
+    componentId: string
+    rev: number
+    sourceCode: string
+    props: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type ComponentVersionUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    componentId?: StringFieldUpdateOperationsInput | string
+    rev?: IntFieldUpdateOperationsInput | number
+    sourceCode?: StringFieldUpdateOperationsInput | string
+    props?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ComponentVersionUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    componentId?: StringFieldUpdateOperationsInput | string
+    rev?: IntFieldUpdateOperationsInput | number
+    sourceCode?: StringFieldUpdateOperationsInput | string
+    props?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ComponentVersionCreateManyInput = {
+    id?: string
+    componentId: string
+    rev: number
+    sourceCode: string
+    props: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type ComponentVersionUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    componentId?: StringFieldUpdateOperationsInput | string
+    rev?: IntFieldUpdateOperationsInput | number
+    sourceCode?: StringFieldUpdateOperationsInput | string
+    props?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ComponentVersionUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    componentId?: StringFieldUpdateOperationsInput | string
+    rev?: IntFieldUpdateOperationsInput | number
+    sourceCode?: StringFieldUpdateOperationsInput | string
+    props?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -2169,6 +3488,29 @@ export namespace Prisma {
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     mode?: QueryMode
     not?: NestedStringFilter<$PrismaModel> | string
+  }
+  export type JsonFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -2197,22 +3539,24 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     sourceCode?: SortOrder
-    propsJson?: SortOrder
+    props?: SortOrder
     rev?: SortOrder
+    schemaVer?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
   export type ComponentAvgOrderByAggregateInput = {
     rev?: SortOrder
+    schemaVer?: SortOrder
   }
 
   export type ComponentMaxOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
     sourceCode?: SortOrder
-    propsJson?: SortOrder
     rev?: SortOrder
+    schemaVer?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -2221,14 +3565,15 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     sourceCode?: SortOrder
-    propsJson?: SortOrder
     rev?: SortOrder
+    schemaVer?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
   export type ComponentSumOrderByAggregateInput = {
     rev?: SortOrder
+    schemaVer?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -2247,6 +3592,32 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedStringFilter<$PrismaModel>
     _max?: NestedStringFilter<$PrismaModel>
+  }
+  export type JsonWithAggregatesFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedJsonFilter<$PrismaModel>
+    _max?: NestedJsonFilter<$PrismaModel>
   }
 
   export type IntWithAggregatesFilter<$PrismaModel = never> = {
@@ -2277,6 +3648,39 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type ComponentVersionCountOrderByAggregateInput = {
+    id?: SortOrder
+    componentId?: SortOrder
+    rev?: SortOrder
+    sourceCode?: SortOrder
+    props?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ComponentVersionAvgOrderByAggregateInput = {
+    rev?: SortOrder
+  }
+
+  export type ComponentVersionMaxOrderByAggregateInput = {
+    id?: SortOrder
+    componentId?: SortOrder
+    rev?: SortOrder
+    sourceCode?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ComponentVersionMinOrderByAggregateInput = {
+    id?: SortOrder
+    componentId?: SortOrder
+    rev?: SortOrder
+    sourceCode?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ComponentVersionSumOrderByAggregateInput = {
+    rev?: SortOrder
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -2346,6 +3750,29 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedStringFilter<$PrismaModel>
     _max?: NestedStringFilter<$PrismaModel>
+  }
+  export type NestedJsonFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<NestedJsonFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {

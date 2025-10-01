@@ -1,24 +1,26 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import {
   createContext,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
   type PropsWithChildren,
 } from "react";
 import { createComponent, getComponent, type ComponentRecord } from "@/lib/api";
-import { initialShowcaseProps, type ShowcaseProps } from "@/types";
+import { initialShowcaseProps, type ShowcaseProps } from "@/types/";
 import Topbar from "./top-bar";
 import Sidebar from "./sidebar";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { writeShowcaseCache } from "@/lib/cache";
 
 const SIDEBAR_WIDTH = 300;
 const TOPBAR_HEIGHT = 60;
 const CONTENT_SPACING = 8;
 
-const STORAGE_KEY = "runable.showcase.id";
 const CACHE_KEY = "runable.showcase.cache";
 
 type Ctx = {
@@ -26,6 +28,7 @@ type Ctx = {
   setShowcaseRecord: React.Dispatch<
     React.SetStateAction<ComponentRecord<ShowcaseProps>>
   >;
+  sharedId: string;
 };
 
 const ShowcaseCtx = createContext<Ctx | null>(null);
@@ -36,6 +39,7 @@ export function useShowcaseDoc(): Ctx {
   return ctx;
 }
 
+// --- util: read cached ComponentRecord for faster hydration ---
 function safeReadCache(): ComponentRecord<ShowcaseProps> | null {
   if (typeof window === "undefined") return null;
   try {
@@ -45,15 +49,9 @@ function safeReadCache(): ComponentRecord<ShowcaseProps> | null {
     return null;
   }
 }
-function safeWriteCache(doc: ComponentRecord<ShowcaseProps>) {
-  if (typeof window === "undefined") return;
-  try {
-    window.localStorage.setItem(CACHE_KEY, JSON.stringify(doc));
-  } catch {}
-}
 
 const STABLE_DEFAULT_DOC: ComponentRecord<ShowcaseProps> = {
-  id: "local-temp",
+  id: "shared-doc",
   name: "ShowcaseSection",
   rev: 0,
   sourceCode: `export default function Showcase(){return null}`,
@@ -61,15 +59,33 @@ const STABLE_DEFAULT_DOC: ComponentRecord<ShowcaseProps> = {
 } as ComponentRecord<ShowcaseProps>;
 
 export default function EditorShell({ children }: PropsWithChildren) {
+  const searchParams =
+    typeof window !== "undefined"
+      ? new URLSearchParams(window.location.search)
+      : null;
+  const idFromQuery = searchParams?.get("doc") ?? "";
+  const idFromEnv =
+    typeof process !== "undefined"
+      ? process.env.NEXT_PUBLIC_SHOWCASE_ID ?? ""
+      : "";
+  const sharedId = useMemo(() => idFromQuery || idFromEnv, []);
+
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const sidebarWidth = sidebarOpen ? SIDEBAR_WIDTH : 0;
-
-  const [doc, setDoc] =
-    useState<ComponentRecord<ShowcaseProps>>(STABLE_DEFAULT_DOC);
-
+  
+  const cached = safeReadCache();
+  const [doc, setDoc] = useState<ComponentRecord<ShowcaseProps>>(
+    cached ?? STABLE_DEFAULT_DOC
+  );
   const [error, setError] = useState<string | null>(null);
 
+  // Hydration guard
   const hydratedOnceRef = useRef(false);
+
+  const ALLOW_CREATE_IF_MISSING =
+    typeof process !== "undefined"
+      ? process.env.NEXT_PUBLIC_ALLOW_CREATE === "1"
+      : false;
 
   useEffect(() => {
     if (hydratedOnceRef.current) return;
@@ -78,37 +94,52 @@ export default function EditorShell({ children }: PropsWithChildren) {
     let alive = true;
 
     (async () => {
-      const cached = safeReadCache();
-      if (cached && alive) {
-        setDoc(cached);
-      }
-
       try {
-        const storedId =
+        // 1) Resolve the id (URL > env)
+        const urlParams =
           typeof window !== "undefined"
-            ? window.localStorage.getItem(STORAGE_KEY) ?? ""
+            ? new URLSearchParams(window.location.search)
+            : null;
+        const idFromQuery = urlParams?.get("doc") ?? "";
+        const idFromEnv =
+          typeof process !== "undefined"
+            ? process.env.NEXT_PUBLIC_SHOWCASE_ID ?? ""
             : "";
+        const resolvedId = idFromQuery || idFromEnv;
 
-        if (storedId) {
-          const rec = await getComponent<ShowcaseProps>(storedId);
+        if (resolvedId) {
+          // fetch the shared doc
+          const rec = await getComponent<ShowcaseProps>(resolvedId);
           if (!alive) return;
           setDoc(rec);
+          writeShowcaseCache(rec);
           return;
         }
 
-        const created = await createComponent<ShowcaseProps>({
-          name: "ShowcaseSection",
-          sourceCode: (cached ?? STABLE_DEFAULT_DOC).sourceCode,
-          props: (cached ?? STABLE_DEFAULT_DOC).props,
-        });
-        if (!alive) return;
-        setDoc(created);
-        if (typeof window !== "undefined") {
-          window.localStorage.setItem(STORAGE_KEY, created.id);
+        // 2) No id given: create only if allowed
+        if (ALLOW_CREATE_IF_MISSING) {
+          const created = await createComponent<ShowcaseProps>({
+            name: "ShowcaseSection",
+            sourceCode: STABLE_DEFAULT_DOC.sourceCode,
+            props: STABLE_DEFAULT_DOC.props,
+          });
+          if (!alive) return;
+          setDoc(created);
+          writeShowcaseCache(created);
+          // You can also log/flash the new id so you can set it in .env later
+          console.info("Created shared component id:", created.id);
+          return;
         }
+
+        // 3) Otherwise, show the helpful error
+        setError(
+          "No shared document id. Provide NEXT_PUBLIC_SHOWCASE_ID or ?doc=<id>."
+        );
       } catch (e) {
         if (!alive) return;
-        setError(e instanceof Error ? e.message : "Failed to reach server");
+        setError(
+          e instanceof Error ? e.message : "Failed to load Showcase doc"
+        );
       }
     })();
 
@@ -117,11 +148,41 @@ export default function EditorShell({ children }: PropsWithChildren) {
     };
   }, []);
 
+  // 2) Real-time sync (polling): every 3s, pull server and apply if rev advanced
   useEffect(() => {
-    safeWriteCache(doc);
+    if (!sharedId) return;
+    let alive = true;
+
+    const tick = async () => {
+      try {
+        const rec = await getComponent<ShowcaseProps>(sharedId);
+        if (!alive) return;
+        if (rec.rev > doc.rev) {
+          setDoc(rec);
+          writeShowcaseCache(rec);
+        }
+      } catch {
+        // network errors ignored for polling
+      }
+    };
+
+    const id = window.setInterval(tick, 3000);
+    return () => {
+      alive = false;
+      window.clearInterval(id);
+    };
+  }, [sharedId, doc.rev]);
+
+  // 3) Also write cache whenever doc changes locally
+  useEffect(() => {
+    writeShowcaseCache(doc);
   }, [doc]);
 
-  const value: Ctx = { showcaseRecord: doc, setShowcaseRecord: setDoc };
+  const value: Ctx = {
+    showcaseRecord: doc,
+    setShowcaseRecord: setDoc,
+    sharedId,
+  };
 
   return (
     <ShowcaseCtx.Provider value={value}>
