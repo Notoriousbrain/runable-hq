@@ -1,31 +1,35 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { updateComponent } from "@/lib/api";
 
-/** Small helper to always call the latest callback without re-subscribing effects */
+/** Keep the latest value in a ref without re-subscribing effects */
 function useLatest<T>(value: T) {
   const ref = useRef(value);
   ref.current = value;
   return ref;
 }
 
-type AutosaveData = { sourceCode?: string; props?: Record<string, unknown> };
+type AutosaveData<TProps = Record<string, unknown>> = {
+  sourceCode?: string;
+  props?: TProps;
+};
 
-type ConflictPayload = {
+type ConflictPayload<TProps = unknown> = {
   rev: number;
   sourceCode: string;
-  props: unknown;
+  props: TProps;
 };
 
 type OnSaved = (next: { rev: number }) => void;
-type OnConflict = (server: ConflictPayload) => void;
+type OnConflict<TProps> = (server: ConflictPayload<TProps>) => void;
 
-type UpdateConflictError = Error & {
+type UpdateConflictError<TProps = unknown> = Error & {
   code?: number;
-  data?: { serverRev: number; server: { sourceCode: string; props: unknown } };
+  data?: { serverRev: number; server: { sourceCode: string; props: TProps } };
 };
 
-export function useAutosave({
+export function useAutosave<TProps = Record<string, unknown>>({
   id,
   initialRev,
   data,
@@ -36,22 +40,25 @@ export function useAutosave({
 }: {
   id: string;
   initialRev: number;
-  data: AutosaveData;
+  data: AutosaveData<TProps>;
   enabled?: boolean;
   delay?: number;
   onSaved?: OnSaved;
-  onConflict?: OnConflict;
+  onConflict?: OnConflict<TProps>;
 }) {
   const [saving, setSaving] = useState(false);
   const lastRev = useRef(initialRev);
   const timer = useRef<number | null>(null);
   const mounted = useRef(true);
 
-  // Keep callbacks fresh without forcing the effect to re-run on every render
+  // track the last payload we actually saved (as a string)
+  const lastSentPayload = useRef<string | null>(null);
+
+  // Keep callbacks fresh without changing deps
   const onSavedRef = useLatest(onSaved);
   const onConflictRef = useLatest(onConflict);
 
-  // If the record changes (new id or new initialRev), sync the rev ref
+  // Sync rev if the record changes (new id or new initialRev)
   useEffect(() => {
     lastRev.current = initialRev;
   }, [id, initialRev]);
@@ -68,8 +75,16 @@ export function useAutosave({
   // Stable payload string to detect meaningful changes
   const stablePayload = useMemo(() => JSON.stringify(data), [data]);
 
+  // Seed baseline so we do NOT save immediately on mount or when id changes
+  useEffect(() => {
+    lastSentPayload.current = stablePayload;
+  }, [id]); // re-seed when switching to a different record
+
   useEffect(() => {
     if (!enabled || !id) return;
+
+    if (stablePayload === lastSentPayload.current) return;
+
     if (timer.current) window.clearTimeout(timer.current);
 
     timer.current = window.setTimeout(async () => {
@@ -83,14 +98,20 @@ export function useAutosave({
         });
 
         lastRev.current = updated.rev;
+        lastSentPayload.current = stablePayload;
         onSavedRef.current?.({ rev: updated.rev });
       } catch (err: unknown) {
-        const e = err as UpdateConflictError;
+        const e = err as UpdateConflictError<TProps>;
         if (e?.code === 409 && e.data) {
+          lastRev.current = e.data.serverRev;
+          lastSentPayload.current = JSON.stringify({
+            sourceCode: e.data.server.sourceCode,
+            props: e.data.server.props,
+          });
           onConflictRef.current?.({
             rev: e.data.serverRev,
             sourceCode: e.data.server.sourceCode,
-            props: e.data.server.props,
+            props: e.data.server.props as TProps,
           });
         } else {
           console.error(e);
@@ -99,7 +120,8 @@ export function useAutosave({
         if (mounted.current) setSaving(false);
       }
     }, delay);
-  }, [stablePayload, id, enabled, delay, onSavedRef, onConflictRef, data]);
+    // 🔻 removed `data` from deps
+  }, [stablePayload, id, enabled, delay, onSavedRef, onConflictRef]);
 
   return { saving, currentRev: lastRev.current };
 }

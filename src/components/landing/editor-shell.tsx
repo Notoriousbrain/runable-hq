@@ -82,7 +82,6 @@ export default function EditorShell({ children }: PropsWithChildren) {
   if (error) return <div className="p-6 text-red-400">{error}</div>;
   if (!doc) return <div className="p-6">Loading…</div>;
 
-  // ✅ No hook here: just a plain object after doc is guaranteed non-null
   const value: Ctx = { showcaseRecord: doc, setShowcaseRecord: setDoc };
 
   return (

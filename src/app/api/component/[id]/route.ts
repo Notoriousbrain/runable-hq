@@ -1,35 +1,40 @@
-import { NextResponse } from "next/server";
+// src/app/api/component/[id]/route.ts
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { updateComponentSchema } from "@/lib/schemas";
 
-export async function PUT(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
-  const body = await req.json().catch(() => null);
-  const parse = updateComponentSchema.safeParse(body);
-  if (!parse.success) {
-    return NextResponse.json(
-      { error: "ValidationError", details: parse.error.flatten() },
-      { status: 400 }
-    );
-  }
-  const { sourceCode, props, rev } = parse.data;
+type Params = { id: string };
 
+// You can type ctx.params as a Promise<Params> and await it
+export async function PUT(req: NextRequest, ctx: { params: Promise<Params> }) {
+  // ✅ await params before using it
+  const { id } = await ctx.params;
+
+  const body = await req.json() as {
+    rev: number;
+    sourceCode?: string;
+    props?: unknown;
+  };
+
+  // fetch current row
   const existing = await prisma.component.findUnique({
-    where: { id: params.id },
+    where: { id },
+    select: { rev: true, sourceCode: true, propsJson: true },
   });
-  if (!existing)
-    return NextResponse.json({ error: "NotFound" }, { status: 404 });
 
-  if (existing.rev !== rev) {
+  if (!existing) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
+  // optimistic concurrency control
+  if (body.rev !== existing.rev) {
     return NextResponse.json(
       {
-        error: "RevisionConflict",
+        code: 409,
+        message: "Conflict",
         serverRev: existing.rev,
         server: {
           sourceCode: existing.sourceCode,
-          props: JSON.parse(existing.propsJson),
+          props: existing.propsJson ? JSON.parse(existing.propsJson) : null,
         },
       },
       { status: 409 }
@@ -37,21 +42,14 @@ export async function PUT(
   }
 
   const updated = await prisma.component.update({
-    where: { id: params.id },
+    where: { id },
     data: {
-      sourceCode: sourceCode ?? existing.sourceCode,
-      propsJson: props ? JSON.stringify(props) : existing.propsJson,
-      rev: { increment: 1 },
+      rev: { increment: 1 }, // or rev: existing.rev + 1 if you're not using Prisma's field ops
+      sourceCode: body.sourceCode ?? existing.sourceCode,
+      propsJson: body.props ? JSON.stringify(body.props) : existing.propsJson,
     },
+    select: { rev: true },
   });
 
-  return NextResponse.json({
-    id: updated.id,
-    rev: updated.rev,
-    name: updated.name,
-    sourceCode: updated.sourceCode,
-    props: JSON.parse(updated.propsJson),
-    createdAt: updated.createdAt,
-    updatedAt: updated.updatedAt,
-  });
+  return NextResponse.json({ rev: updated.rev }, { status: 200 });
 }

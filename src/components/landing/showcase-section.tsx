@@ -13,6 +13,9 @@ import {
 } from "lucide-react";
 import ShowcaseCard from "./showcase-card";
 import { useShowcaseDoc } from "./editor-shell";
+import { ShowcaseProps } from "@/types/showcase";
+import { useAutosave } from "@/hooks/useAutosave";
+import HeadingInlineEditor from "../editor-toolbar";
 
 const categories: ReadonlyArray<{
   icon: React.ReactNode;
@@ -90,25 +93,36 @@ const items = [
 ];
 
 export default function ShowcaseSection() {
-  const { showcaseRecord } = useShowcaseDoc();
+  const { showcaseRecord, setShowcaseRecord } = useShowcaseDoc();
   const p = showcaseRecord.props;
+
+  useAutosave<ShowcaseProps>({
+    id: showcaseRecord.id,
+    initialRev: showcaseRecord.rev,
+    data: { props: showcaseRecord.props },
+    enabled: true,
+    delay: 900,
+    onSaved: ({ rev }) =>
+      setShowcaseRecord((prev) => (prev ? { ...prev, rev } : prev)),
+    onConflict: ({ rev, props }) => {
+      const serverProps = props as ShowcaseProps;
+      setShowcaseRecord((prev) =>
+        prev ? { ...prev, rev, props: serverProps } : prev
+      );
+    },
+  });
+
+  function onEdit(next: ShowcaseProps) {
+    setShowcaseRecord((prev) => (prev ? { ...prev, props: next } : prev));
+  }
+
   return (
     <section className="mx-auto max-w-6xl px-4 my-12">
-      <div className="relative flex justify-center items-center">
+      <div className="relative flex items-center justify-center">
         <div className="hidden lg:flex h-px w-full bg-white/10" />
-        <h2
-          className="text-center w-full sm:text-base"
-          style={{
-            color: p.headingColor,
-            fontSize: p.headingFontSize,
-            fontWeight: p.headingBold ? 700 : 500,
-          }}
-        >
-          {p?.headingText}
-        </h2>
+        <HeadingInlineEditor value={p} onChange={onEdit} />
         <div className="hidden lg:flex h-px w-full bg-white/10" />
       </div>
-
       <div className="mt-12 overflow-x-auto">
         <div className="min-w-max mx-auto flex items-center gap-2 rounded-full border border-white/3">
           {categories.map((c) => (
@@ -127,7 +141,6 @@ export default function ShowcaseSection() {
           ))}
         </div>
       </div>
-
       <div className="mt-6 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
         {items.map((it) => (
           <ShowcaseCard
