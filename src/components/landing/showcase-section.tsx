@@ -69,7 +69,7 @@ const items = [
 
 export default function ShowcaseSection() {
   return (
-    <section className="mx-auto max-w-6xl px-4 mt-12">
+    <section className="mx-auto max-w-6xl px-4 my-12">
       <div className="relative flex justify-center items-center">
         <div className="hidden lg:flex h-px w-full bg-white/10" />
         <h2 className="text-center w-full text-sm sm:text-base text-white/70">Explore what people are building with Runable</h2>
