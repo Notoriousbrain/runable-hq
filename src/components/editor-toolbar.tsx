@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import type { ShowcaseProps } from "@/types/showcase";
+
 import {
   Popover,
   PopoverContent,
@@ -12,10 +12,11 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
 import { PaintBucket, CaseUpper, Bold as BoldIcon } from "lucide-react";
+import { TextToken } from "@/types";
 
 type Props = {
-  value: ShowcaseProps;
-  onChange: (next: ShowcaseProps) => void;
+  value: TextToken;
+  onChange: (next: TextToken) => void;
   className?: string;
 };
 
@@ -29,7 +30,7 @@ export default function HeadingInlineEditor({
   const [openColor, setOpenColor] = useState(false);
   const [openSize, setOpenSize] = useState(false);
   const [openWeight, setOpenWeight] = useState(false);
-  const [localWeight, setLocalWeight] = useState<400 | 500 | 600 | 700 | null>(
+  const [localWeight, setLocalWeight] = useState<TextToken["weight"] | null>(
     null
   );
 
@@ -39,16 +40,18 @@ export default function HeadingInlineEditor({
   const sizeBadgeRef = useRef<HTMLSpanElement | null>(null);
   const weightBadgeRef = useRef<HTMLSpanElement | null>(null);
 
-  const [localText, setLocalText] = useState(value.headingText ?? "");
+  const [localText, setLocalText] = useState(value.title ?? "");
 
+  // ----- Color state (derived) -----
   const initialRGBA = useMemo(
-    () => parseColorToRgba(value.headingColor),
-    [value.headingColor]
+    () => parseColorToRgba(value.color),
+    [value.color]
   );
   const [r, setR] = useState(initialRGBA.r);
   const [g, setG] = useState(initialRGBA.g);
   const [b, setB] = useState(initialRGBA.b);
   const [a, setA] = useState(initialRGBA.a);
+
   const rgbaString = `rgba(${clamp(r, 0, 255)}, ${clamp(g, 0, 255)}, ${clamp(
     b,
     0,
@@ -56,18 +59,21 @@ export default function HeadingInlineEditor({
   )}, ${clamp(a, 0, 1)})`;
   const hexString = rgbToHex(r, g, b);
 
+  // Keep text in sync when not editing
   useEffect(() => {
-    if (!editing) setLocalText(value.headingText ?? "");
-  }, [value.headingText, editing]);
+    if (!editing) setLocalText(value.title ?? "");
+  }, [value.title, editing]);
 
+  // Keep color controls synced with prop changes
   useEffect(() => {
-    const next = parseColorToRgba(value.headingColor);
+    const next = parseColorToRgba(value.color);
     setR(next.r);
     setG(next.g);
     setB(next.b);
     setA(next.a);
-  }, [value.headingColor]);
+  }, [value.color]);
 
+  // Caret helpers
   function moveCaretToEnd(el: HTMLElement) {
     const range = document.createRange();
     range.selectNodeContents(el);
@@ -77,6 +83,7 @@ export default function HeadingInlineEditor({
     sel?.addRange(range);
   }
 
+  // Focus & caret on enter edit
   useLayoutEffect(() => {
     if (!editing) return;
     const el = hRef.current;
@@ -88,6 +95,7 @@ export default function HeadingInlineEditor({
     );
   }, [editing, localText]);
 
+  // Click-away to stop editing
   useEffect(() => {
     if (!editing) return;
     const onDown = (e: MouseEvent) => {
@@ -105,6 +113,7 @@ export default function HeadingInlineEditor({
     return () => document.removeEventListener("mousedown", onDown);
   }, [editing]);
 
+  // ----- Apply handlers -----
   function applyColor(next: {
     r?: number;
     g?: number;
@@ -119,7 +128,7 @@ export default function HeadingInlineEditor({
     setG(G);
     setB(B);
     setA(A);
-    onChange({ ...value, headingColor: `rgba(${R}, ${G}, ${B}, ${A})` });
+    onChange({ ...value, color: `rgba(${R}, ${G}, ${B}, ${A})` });
   }
   function applyHex(hex: string) {
     const parsed = hexToRgbSafe(hex);
@@ -134,25 +143,18 @@ export default function HeadingInlineEditor({
 
   function applySize(px: number[]) {
     const n = clamp(px[0], 10, 128);
-    onChange({ ...value, headingFontSize: n });
+    onChange({ ...value, fontSize: n });
   }
 
-  const currentWeight: 400 | 500 | 600 | 700 =
-    localWeight ??
-    (value.headingWeight as 400 | 500 | 600 | 700) ??
-    (value.headingBold ? 700 : 500);
-
-  function setWeight(w: 400 | 500 | 600 | 700) {
-    setLocalWeight(w);
-    onChange({
-      ...value,
-      headingWeight: w,
-      headingBold: w >= 600,
-    } as ShowcaseProps);
+  const currentWeight: TextToken["weight"] = localWeight ?? value.weight;
+  function setWeight(w: TextToken["weight"]) {
+    setLocalWeight(w); // immediate visual
+    onChange({ ...value, weight: w });
   }
 
   return (
     <>
+      {/* Main popover anchored to the heading */}
       <Popover open={editing}>
         <PopoverAnchor asChild>
           <h2
@@ -181,17 +183,14 @@ export default function HeadingInlineEditor({
             onInput={(e) => {
               const t = (e.target as HTMLElement).innerText;
               setLocalText(t);
-              onChange({
-                ...value,
-                headingText: t.trim().replace(/\s+/g, " "),
-              });
+              onChange({ ...value, title: t.trim().replace(/\s+/g, " ") });
             }}
             onKeyDown={(e) => {
               if (e.key === "Enter") e.preventDefault();
             }}
             style={{
-              color: value.headingColor,
-              fontSize: value.headingFontSize,
+              color: value.color,
+              fontSize: value.fontSize,
               fontWeight: currentWeight,
               cursor: "text",
               boxShadow: editing
@@ -282,6 +281,7 @@ export default function HeadingInlineEditor({
         )}
       </Popover>
 
+      {/* COLOR POPOVER */}
       <Popover open={openColor} onOpenChange={setOpenColor}>
         <PopoverAnchor asChild>
           <span ref={colorBadgeRef} />
@@ -354,6 +354,7 @@ export default function HeadingInlineEditor({
         </PopoverContent>
       </Popover>
 
+      {/* SIZE POPOVER */}
       <Popover open={openSize} onOpenChange={setOpenSize}>
         <PopoverAnchor asChild>
           <span ref={sizeBadgeRef} />
@@ -374,7 +375,7 @@ export default function HeadingInlineEditor({
             <span>Font size</span>
             <Input
               type="number"
-              value={Math.round(value.headingFontSize ?? 20)}
+              value={Math.round(value.fontSize ?? 20)}
               min={10}
               max={128}
               className="h-7 w-16"
@@ -383,7 +384,7 @@ export default function HeadingInlineEditor({
           </div>
           <div className="mt-2">
             <Slider
-              value={[Math.round(value.headingFontSize ?? 20)]}
+              value={[Math.round(value.fontSize ?? 20)]}
               min={10}
               max={128}
               step={1}
@@ -393,6 +394,7 @@ export default function HeadingInlineEditor({
         </PopoverContent>
       </Popover>
 
+      {/* WEIGHT POPOVER */}
       <Popover open={openWeight} onOpenChange={setOpenWeight}>
         <PopoverAnchor asChild>
           <span ref={weightBadgeRef} />
@@ -428,6 +430,8 @@ export default function HeadingInlineEditor({
     </>
   );
 }
+
+/* ---------- helpers ---------- */
 
 function clamp(n: number, min: number, max: number) {
   return Math.min(max, Math.max(min, n));

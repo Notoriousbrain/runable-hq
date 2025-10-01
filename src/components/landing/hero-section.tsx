@@ -1,8 +1,17 @@
-import { ChevronRight, Crown, ExternalLink, Paperclip, PlayCircle } from "lucide-react";
+import {
+  ChevronRight,
+  Crown,
+  ExternalLink,
+  Paperclip,
+  PlayCircle,
+} from "lucide-react";
 import React from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import ActionCard from "./action-card";
+import { useShowcaseDoc } from "./editor-shell";
+import { ShowcaseProps } from "@/types";
+import TitleEditor from "../title-header";
 
 const HeroSection = () => {
   const cards: ReadonlyArray<{ title: string; img: string }> = [
@@ -35,12 +44,21 @@ const HeroSection = () => {
       img: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1200&auto=format&fit=crop",
     },
   ];
+
+  const { showcaseRecord, setShowcaseRecord } = useShowcaseDoc();
+
+  function onEdit(next: ShowcaseProps) {
+    setShowcaseRecord((prev) => (prev ? { ...prev, props: next } : prev));
+  }
+
   return (
     <div className="mx-auto max-w-6xl min-h-[calc(100dvh-200px)] px-4 flex justify-center items-center">
       <div>
-        <h1 className="text-center text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight">
-          What can I get done for you?
-        </h1>
+        <TitleEditor
+          token="landing"
+          value={showcaseRecord.props}
+          onChange={onEdit}
+        />
 
         <div className="mx-auto mt-8 max-w-4xl">
           <div className="rounded-b-2xl rounded-t-[30px] bg-[#1a1a1b] p-[1px]">
@@ -81,7 +99,7 @@ const HeroSection = () => {
           ))}
           <div className="rounded-xl border border-white/10 bg-[#141415] p-4 flex flex-col justify-center">
             <div className="flex items-center flex-col gap-2 text-sm">
-             <PlayCircle className="h-10 w-10 text-white" strokeWidth={1.5} />
+              <PlayCircle className="h-10 w-10 text-white" strokeWidth={1.5} />
               <div className="flex items-center justify-center gap-3">
                 <span className="font-black">Runbooks</span>
                 <ExternalLink className="h-3.5 w-3.5 ms-auto font-bold" />

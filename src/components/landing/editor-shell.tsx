@@ -9,7 +9,7 @@ import {
   type PropsWithChildren,
 } from "react";
 import { createComponent, getComponent, type ComponentRecord } from "@/lib/api";
-import { initialShowcaseProps, type ShowcaseProps } from "@/types/showcase";
+import { initialShowcaseProps, type ShowcaseProps } from "@/types";
 import Topbar from "./top-bar";
 import Sidebar from "./sidebar";
 import { ChevronLeft, ChevronRight } from "lucide-react";

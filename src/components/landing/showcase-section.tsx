@@ -12,9 +12,9 @@ import {
 } from "lucide-react";
 import ShowcaseCard from "./showcase-card";
 import { useShowcaseDoc } from "./editor-shell";
-import { ShowcaseProps } from "@/types/showcase";
+import { ShowcaseProps } from "@/types";
 import { useAutosave } from "@/hooks/useAutosave";
-import HeadingInlineEditor from "../editor-toolbar";
+import TitleEditor from "../title-header";
 
 const categories: ReadonlyArray<{
   icon: React.ReactNode;
@@ -93,7 +93,6 @@ const items = [
 
 export default function ShowcaseSection() {
   const { showcaseRecord, setShowcaseRecord } = useShowcaseDoc();
-  const p = showcaseRecord.props;
 
   useAutosave<ShowcaseProps>({
     id: showcaseRecord.id,
@@ -119,7 +118,11 @@ export default function ShowcaseSection() {
     <section className="mx-auto max-w-6xl px-4 my-12">
       <div className="relative flex items-center justify-center">
         <div className="hidden lg:flex h-px w-full bg-white/10" />
-        <HeadingInlineEditor value={p} onChange={onEdit} />
+        <TitleEditor
+          token="showcase"
+          value={showcaseRecord.props}
+          onChange={onEdit}
+        />
         <div className="hidden lg:flex h-px w-full bg-white/10" />
       </div>
       <div className="mt-12 overflow-x-auto">
