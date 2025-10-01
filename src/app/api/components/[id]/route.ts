@@ -1,11 +1,10 @@
+// app/api/components/[id]/route.ts
 import { NextRequest } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
-import { publish } from "@/lib/realtime";
 import { Prisma } from "prisma/src/generated/prisma";
 
 type Json = null | boolean | number | string | Json[] | { [key: string]: Json };
-
 const JsonSchema: z.ZodType<Json> = z.lazy(() =>
   z.union([
     z.null(),
@@ -16,10 +15,6 @@ const JsonSchema: z.ZodType<Json> = z.lazy(() =>
     z.record(z.string(), JsonSchema),
   ])
 );
-
-function toPrismaJson(v: Json): Prisma.InputJsonValue | typeof Prisma.JsonNull {
-  return v === null ? Prisma.JsonNull : (v as unknown as Prisma.InputJsonValue);
-}
 
 const UpdateSchema = z.object({
   rev: z.number(),
@@ -32,32 +27,31 @@ export async function GET(
   _req: NextRequest,
   { params }: { params: { id: string } }
 ): Promise<Response> {
-  const { id } = params;
-
-  const row = await prisma.component.findUnique({ where: { id } });
-  if (!row) {
+  const row = await prisma.component.findUnique({ where: { id: params.id } });
+  if (!row)
     return new Response(JSON.stringify({ error: "Not found" }), {
       status: 404,
     });
-  }
-
   return Response.json(row);
+}
+
+function toPrismaJson(v: Json): Prisma.InputJsonValue | typeof Prisma.JsonNull {
+  return v === null ? Prisma.JsonNull : (v as unknown as Prisma.InputJsonValue);
 }
 
 export async function PATCH(
   req: NextRequest,
   { params }: { params: { id: string } }
 ): Promise<Response> {
-  const { id } = params;
-  const json = await req.json().catch(() => ({}));
-  const body = UpdateSchema.parse(json);
+  const body = UpdateSchema.parse(await req.json().catch(() => ({})));
 
-  const server = await prisma.component.findUnique({ where: { id } });
-  if (!server) {
+  const server = await prisma.component.findUnique({
+    where: { id: params.id },
+  });
+  if (!server)
     return new Response(JSON.stringify({ error: "Not found" }), {
       status: 404,
     });
-  }
 
   if (body.rev !== server.rev) {
     return new Response(
@@ -66,10 +60,7 @@ export async function PATCH(
         code: 409,
         data: {
           serverRev: server.rev,
-          server: {
-            sourceCode: server.sourceCode,
-            props: server.props,
-          },
+          server: { sourceCode: server.sourceCode, props: server.props },
         },
       }),
       { status: 409 }
@@ -88,14 +79,9 @@ export async function PATCH(
   };
 
   const updated = await prisma.component.update({
-    where: { id },
+    where: { id: params.id },
     data,
   });
-
-  publish(`component:${id}`, { type: "patch", id, rev: updated.rev }).catch(
-    () => {}
-  );
-
   return Response.json({ id: updated.id, rev: updated.rev });
 }
 
@@ -103,8 +89,6 @@ export async function DELETE(
   _req: NextRequest,
   { params }: { params: { id: string } }
 ): Promise<Response> {
-  const { id } = params;
-  await prisma.component.delete({ where: { id } }).catch(() => {});
-  publish(`component:${id}`, { type: "deleted", id }).catch(() => {});
+  await prisma.component.delete({ where: { id: params.id } }).catch(() => {});
   return new Response(null, { status: 204 });
 }

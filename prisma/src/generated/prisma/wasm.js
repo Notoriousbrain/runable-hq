@@ -176,6 +176,7 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -184,8 +185,8 @@ const config = {
       }
     }
   },
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"./src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel Component {\n  id         String   @id @default(cuid())\n  name       String   @default(\"Untitled Component\")\n  sourceCode String   @db.Text\n  props      Json     @default(\"{}\")\n  rev        Int      @default(1)\n  schemaVer  Int      @default(1)\n  createdAt  DateTime @default(now())\n  updatedAt  DateTime @updatedAt\n\n  @@index([updatedAt])\n}\n\nmodel ComponentVersion {\n  id          String   @id @default(cuid())\n  componentId String\n  rev         Int\n  sourceCode  String   @db.Text\n  props       Json\n  createdAt   DateTime @default(now())\n\n  @@index([componentId, rev], map: \"component_rev_idx\")\n}\n",
-  "inlineSchemaHash": "8057f49d3616a048864794c068bbe54025b191ca43db84d789f2457e602fa151",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"./src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel Component {\n  id         String   @id @default(cuid())\n  name       String   @default(\"Untitled Component\")\n  sourceCode String   @db.Text\n  props      Json     @default(\"{}\")\n  rev        Int      @default(1)\n  schemaVer  Int      @default(1)\n  createdAt  DateTime @default(now())\n  updatedAt  DateTime @updatedAt\n\n  @@index([updatedAt])\n}\n\nmodel ComponentVersion {\n  id          String   @id @default(cuid())\n  componentId String\n  rev         Int\n  sourceCode  String   @db.Text\n  props       Json\n  createdAt   DateTime @default(now())\n\n  @@index([componentId, rev], map: \"component_rev_idx\")\n}\n",
+  "inlineSchemaHash": "38bb8ea2d54dea87fb7755ec2773f9202fcf3d035589b8c92a955e96aa87ece8",
   "copyEngine": true
 }
 config.dirname = '/'
