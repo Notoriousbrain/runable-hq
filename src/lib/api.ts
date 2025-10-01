@@ -1,49 +1,74 @@
-// src/lib/api.ts
-export type ComponentRecord<T = unknown> = {
+import type { Json } from "@/types/json";
+
+export type ComponentRecord<TProps = Json> = {
   id: string;
-  rev: number;
   name: string;
   sourceCode: string;
-  props: T;
+  props: TProps;
+  rev: number;
   createdAt: string;
   updatedAt: string;
+  schemaVer?: number;
 };
 
-export async function createComponent<T>(payload: {
-  sourceCode: string;
+export type UpdateConflictError<TProps = Json> = Error & {
+  code?: number;
+  data?: { serverRev: number; server: { sourceCode: string; props: TProps } };
+};
+
+async function json<T>(res: Response): Promise<T> {
+  if (!res.ok) {
+    let body = null;
+    try {
+      body = await res.json();
+    } catch {}
+    const err = new Error(body?.error || res.statusText) as UpdateConflictError;
+    err.code = res.status;
+    if (res.status === 409 && body?.data) {
+      err.data = body.data;
+    }
+    throw err;
+  }
+  return res.json();
+}
+
+export async function getComponent<TProps = Json>(
+  id: string
+): Promise<ComponentRecord<TProps>> {
+  const res = await fetch(`/api/components/${encodeURIComponent(id)}`, {
+    cache: "no-store",
+  });
+  return json<ComponentRecord<TProps>>(res);
+}
+
+export async function createComponent<TProps = Json>(input: {
+  id?: string;
   name?: string;
-  props?: T;
-}): Promise<ComponentRecord<T>> {
-  const res = await fetch(`/api/component`, {
+  sourceCode?: string;
+  props?: TProps;
+  schemaVer?: number;
+}): Promise<ComponentRecord<TProps>> {
+  const res = await fetch(`/api/components`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
+    body: JSON.stringify(input),
   });
-  if (!res.ok) throw new Error(await res.text());
-  return res.json() as Promise<ComponentRecord<T>>;
+  return json<ComponentRecord<TProps>>(res);
 }
 
-export async function getComponent<T>(id: string): Promise<ComponentRecord<T>> {
-  const res = await fetch(`/api/preview/${id}`);
-  if (!res.ok) throw new Error(await res.text());
-  return res.json() as Promise<ComponentRecord<T>>;
-}
-
-export async function updateComponent<T>(
+export async function updateComponent<TProps = Json>(
   id: string,
-  payload: Partial<Pick<ComponentRecord<T>, "sourceCode" | "props">> & {
+  data: {
     rev: number;
+    sourceCode?: string;
+    props?: TProps;
+    schemaVer?: number;
   }
-): Promise<ComponentRecord<T>> {
-  const res = await fetch(`/api/component/${id}`, {
-    method: "PUT",
+): Promise<{ id: string; rev: number }> {
+  const res = await fetch(`/api/components/${encodeURIComponent(id)}`, {
+    method: "PATCH",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
+    body: JSON.stringify(data),
   });
-  if (res.status === 409) {
-    const data = await res.json();
-    throw Object.assign(new Error("Revision conflict"), { code: 409, data });
-  }
-  if (!res.ok) throw new Error(await res.text());
-  return res.json() as Promise<ComponentRecord<T>>;
+  return json<{ id: string; rev: number }>(res);
 }

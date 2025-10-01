@@ -7,13 +7,16 @@ export async function GET(
 ) {
   const { id } = params;
   const found = await prisma.component.findUnique({ where: { id } });
-  if (!found) return NextResponse.json({ error: "NotFound" }, { status: 404 });
+  if (!found) {
+    return NextResponse.json({ error: "NotFound" }, { status: 404 });
+  }
+
   return NextResponse.json({
     id: found.id,
     rev: found.rev,
     name: found.name,
     sourceCode: found.sourceCode,
-    props: JSON.parse(found.propsJson),
+    props: found.props,
     createdAt: found.createdAt,
     updatedAt: found.updatedAt,
   });

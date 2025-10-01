@@ -1,7 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
+
 import { useEffect, useMemo, useRef, useState } from "react";
 import { updateComponent } from "@/lib/api";
+import type { Json } from "@/types/json";
 
 function useLatest<T>(value: T) {
   const ref = useRef(value);
@@ -9,12 +11,12 @@ function useLatest<T>(value: T) {
   return ref;
 }
 
-type AutosaveData<TProps = Record<string, unknown>> = {
+type AutosaveData<TProps = Json> = {
   sourceCode?: string;
   props?: TProps;
 };
 
-type ConflictPayload<TProps = unknown> = {
+type ConflictPayload<TProps = Json> = {
   rev: number;
   sourceCode: string;
   props: TProps;
@@ -23,12 +25,12 @@ type ConflictPayload<TProps = unknown> = {
 type OnSaved = (next: { rev: number }) => void;
 type OnConflict<TProps> = (server: ConflictPayload<TProps>) => void;
 
-type UpdateConflictError<TProps = unknown> = Error & {
+type UpdateConflictError<TProps = Json> = Error & {
   code?: number;
   data?: { serverRev: number; server: { sourceCode: string; props: TProps } };
 };
 
-export function useAutosave<TProps = Record<string, unknown>>({
+export function useAutosave<TProps = Json>({
   id,
   initialRev,
   data,
@@ -57,6 +59,7 @@ export function useAutosave<TProps = Record<string, unknown>>({
 
   useEffect(() => {
     lastRev.current = initialRev;
+    lastSentPayload.current = null;
   }, [id, initialRev]);
 
   useEffect(() => {
@@ -70,7 +73,7 @@ export function useAutosave<TProps = Record<string, unknown>>({
   const stablePayload = useMemo(() => JSON.stringify(data), [data]);
 
   useEffect(() => {
-    lastSentPayload.current = stablePayload;
+    lastSentPayload.current = null;
   }, [id]);
 
   useEffect(() => {
@@ -85,7 +88,7 @@ export function useAutosave<TProps = Record<string, unknown>>({
         if (!mounted.current) return;
         setSaving(true);
 
-        const updated = await updateComponent(id, {
+        const updated = await updateComponent<TProps>(id, {
           ...data,
           rev: lastRev.current,
         });
