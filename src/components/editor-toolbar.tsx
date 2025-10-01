@@ -1,16 +1,17 @@
-// src/components/heading-inline-editor.tsx
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { ShowcaseProps } from "@/types/showcase";
-
 import {
   Popover,
   PopoverContent,
   PopoverAnchor,
 } from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
-import { PaintBucket, CaseUpper, Bold } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
+import { Input } from "@/components/ui/input";
+import { PaintBucket, CaseUpper, Bold as BoldIcon } from "lucide-react";
 
 type Props = {
   value: ShowcaseProps;
@@ -24,20 +25,53 @@ export default function HeadingInlineEditor({
   className,
 }: Props) {
   const [editing, setEditing] = useState(false);
-  const hRef = useRef<HTMLHeadingElement | null>(null);
-  const popRef = useRef<HTMLDivElement | null>(null);
-  const [localText, setLocalText] = useState(value.headingText ?? "");
-  const startViaRef = useRef<"dblclick" | null>(null);
 
-  // Keep local state in sync when props change (only matters when not editing)
+  const [openColor, setOpenColor] = useState(false);
+  const [openSize, setOpenSize] = useState(false);
+  const [openWeight, setOpenWeight] = useState(false);
+  const [localWeight, setLocalWeight] = useState<400 | 500 | 600 | 700 | null>(
+    null
+  );
+
+  const hRef = useRef<HTMLHeadingElement | null>(null);
+  const popMainRef = useRef<HTMLDivElement | null>(null);
+  const colorBadgeRef = useRef<HTMLSpanElement | null>(null);
+  const sizeBadgeRef = useRef<HTMLSpanElement | null>(null);
+  const weightBadgeRef = useRef<HTMLSpanElement | null>(null);
+
+  const [localText, setLocalText] = useState(value.headingText ?? "");
+
+  const initialRGBA = useMemo(
+    () => parseColorToRgba(value.headingColor),
+    [value.headingColor]
+  );
+  const [r, setR] = useState(initialRGBA.r);
+  const [g, setG] = useState(initialRGBA.g);
+  const [b, setB] = useState(initialRGBA.b);
+  const [a, setA] = useState(initialRGBA.a);
+  const rgbaString = `rgba(${clamp(r, 0, 255)}, ${clamp(g, 0, 255)}, ${clamp(
+    b,
+    0,
+    255
+  )}, ${clamp(a, 0, 1)})`;
+  const hexString = rgbToHex(r, g, b);
+
   useEffect(() => {
     if (!editing) setLocalText(value.headingText ?? "");
   }, [value.headingText, editing]);
 
+  useEffect(() => {
+    const next = parseColorToRgba(value.headingColor);
+    setR(next.r);
+    setG(next.g);
+    setB(next.b);
+    setA(next.a);
+  }, [value.headingColor]);
+
   function moveCaretToEnd(el: HTMLElement) {
     const range = document.createRange();
     range.selectNodeContents(el);
-    range.collapse(false); // end
+    range.collapse(false);
     const sel = window.getSelection();
     sel?.removeAllRanges();
     sel?.addRange(range);
@@ -47,148 +81,407 @@ export default function HeadingInlineEditor({
     if (!editing) return;
     const el = hRef.current;
     if (!el) return;
-
-    // Ensure DOM has the latest text
     if (el.innerText !== localText) el.innerText = localText;
-
-    // Focus without scrolling
     el.focus({ preventScroll: true });
-
-    // Force caret to end AFTER the browser’s own dblclick selection has settled
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => moveCaretToEnd(el));
-    });
-
-    // we don't need startViaRef anymore since we always go to end
-    startViaRef.current = null;
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => moveCaretToEnd(el))
+    );
   }, [editing, localText]);
 
-  // Click-away to commit
   useEffect(() => {
     if (!editing) return;
     const onDown = (e: MouseEvent) => {
-      const target = e.target as Node;
-      if (hRef.current?.contains(target)) return;
-      if (popRef.current?.contains(target)) return;
-      stopEditing(true);
+      const t = e.target as Node;
+      if (hRef.current?.contains(t)) return;
+      if (popMainRef.current?.contains(t)) return;
+      const subs = document.querySelectorAll("[data-subpopover='true']");
+      for (const el of Array.from(subs)) if (el.contains(t)) return;
+      setEditing(false);
+      setOpenColor(false);
+      setOpenSize(false);
+      setOpenWeight(false);
     };
     document.addEventListener("mousedown", onDown);
     return () => document.removeEventListener("mousedown", onDown);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editing, localText]);
+  }, [editing]);
 
-  function stopEditing(commitChanges = true) {
-    if (commitChanges) {
-      // Read from DOM to be safe
-      const finalText = (hRef.current?.innerText ?? localText)
-        .trim()
-        .replace(/\s+/g, " ");
-      setLocalText(finalText);
-      onChange({ ...value, headingText: finalText });
-    } else {
-      // Revert DOM
-      if (hRef.current) hRef.current.innerText = value.headingText ?? "";
-      setLocalText(value.headingText ?? "");
-    }
-    setEditing(false);
+  function applyColor(next: {
+    r?: number;
+    g?: number;
+    b?: number;
+    a?: number;
+  }) {
+    const R = clamp(next.r ?? r, 0, 255);
+    const G = clamp(next.g ?? g, 0, 255);
+    const B = clamp(next.b ?? b, 0, 255);
+    const A = clamp(next.a ?? a, 0, 1);
+    setR(R);
+    setG(G);
+    setB(B);
+    setA(A);
+    onChange({ ...value, headingColor: `rgba(${R}, ${G}, ${B}, ${A})` });
+  }
+  function applyHex(hex: string) {
+    const parsed = hexToRgbSafe(hex);
+    if (parsed) applyColor({ r: parsed.r, g: parsed.g, b: parsed.b });
+  }
+  function applyNativeColor(hex: string) {
+    applyHex(hex);
+  }
+  function applyAlpha(val: number[]) {
+    applyColor({ a: val[0] });
+  }
+
+  function applySize(px: number[]) {
+    const n = clamp(px[0], 10, 128);
+    onChange({ ...value, headingFontSize: n });
+  }
+
+  const currentWeight: 400 | 500 | 600 | 700 =
+    localWeight ??
+    (value.headingWeight as 400 | 500 | 600 | 700) ??
+    (value.headingBold ? 700 : 500);
+
+  function setWeight(w: 400 | 500 | 600 | 700) {
+    setLocalWeight(w);
+    onChange({
+      ...value,
+      headingWeight: w,
+      headingBold: w >= 600,
+    } as ShowcaseProps);
   }
 
   return (
-    <Popover open={editing}>
-      <PopoverAnchor asChild>
-        <h2
-          ref={hRef}
-          className={[
-            "text-center w-full sm:text-base select-text outline-none",
-            className,
-          ].join(" ")}
-          suppressContentEditableWarning
-          contentEditable={editing}
-          spellCheck={false}
-          role="textbox"
-          aria-label="Edit heading"
-          onDoubleClick={() => {
-            startViaRef.current = "dblclick";
-            setEditing(true);
-          }}
-          onClick={() => {
-            if (editing) hRef.current?.focus({ preventScroll: true });
-          }}
-          onPaste={(e) => {
-            // Paste as plain text
-            e.preventDefault();
-            const text = e.clipboardData.getData("text/plain");
-            document.execCommand("insertText", false, text);
-          }}
-          onInput={(e) => {
-            // Update state for external saves, but React won't re-render text while editing
-            const t = (e.target as HTMLElement).innerText;
-            setLocalText(t);
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
+    <>
+      <Popover open={editing}>
+        <PopoverAnchor asChild>
+          <h2
+            ref={hRef}
+            className={[
+              "text-center w-full sm:text-base select-text outline-none",
+              className,
+            ].join(" ")}
+            suppressContentEditableWarning
+            contentEditable={editing}
+            spellCheck={false}
+            role="textbox"
+            aria-label="Edit heading"
+            onDoubleClick={() => setEditing(true)}
+            onClick={() => {
+              if (editing) hRef.current?.focus({ preventScroll: true });
+            }}
+            onPaste={(e) => {
               e.preventDefault();
-              stopEditing(true);
-            } else if (e.key === "Escape") {
-              e.preventDefault();
-              stopEditing(false);
-            }
-          }}
-          // IMPORTANT: while editing, DO NOT render children from React (prevents caret jump)
-          style={{
-            color: value.headingColor,
-            fontSize: value.headingFontSize,
-            fontWeight: value.headingBold ? 700 : 500,
-            cursor: "text",
-            boxShadow: editing
-              ? "0 0 0 1px rgba(255,255,255,0.18) inset"
-              : "none",
-            borderRadius: 8,
-            paddingInline: editing ? 6 : 0,
-          }}
-        >
-          {editing ? null : localText}
-        </h2>
-      </PopoverAnchor>
+              document.execCommand(
+                "insertText",
+                false,
+                e.clipboardData.getData("text/plain")
+              );
+            }}
+            onInput={(e) => {
+              const t = (e.target as HTMLElement).innerText;
+              setLocalText(t);
+              onChange({
+                ...value,
+                headingText: t.trim().replace(/\s+/g, " "),
+              });
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") e.preventDefault();
+            }}
+            style={{
+              color: value.headingColor,
+              fontSize: value.headingFontSize,
+              fontWeight: currentWeight,
+              cursor: "text",
+              boxShadow: editing
+                ? "0 0 0 1px rgba(255,255,255,0.18) inset"
+                : "none",
+              borderRadius: 8,
+              paddingInline: editing ? 6 : 0,
+            }}
+          >
+            {editing ? null : localText}
+          </h2>
+        </PopoverAnchor>
 
-      {editing && (
+        {editing && (
+          <PopoverContent
+            ref={popMainRef}
+            side="top"
+            align="center"
+            sideOffset={18}
+            collisionPadding={16}
+            avoidCollisions
+            className="min-w-[260px] rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md shadow-[0_10px_30px_rgba(0,0,0,0.35)] p-2"
+            onOpenAutoFocus={(e) => e.preventDefault()}
+            onCloseAutoFocus={(e) => e.preventDefault()}
+          >
+            <div className="flex items-center justify-center gap-2">
+              <span ref={colorBadgeRef}>
+                <Badge
+                  onClick={() => {
+                    setOpenColor((v) => !v);
+                    setOpenSize(false);
+                    setOpenWeight(false);
+                  }}
+                  variant="secondary"
+                  className="cursor-pointer text-xs px-2.5 py-1.5 rounded-full text-white bg-white/10 hover:bg-white/15 transition inline-flex items-center"
+                  style={{
+                    border: openColor
+                      ? "1px solid rgba(255,255,255,0.3)"
+                      : "1px solid transparent",
+                  }}
+                >
+                  <PaintBucket className="mr-1 h-3.5 w-3.5" />
+                  Color
+                </Badge>
+              </span>
+
+              <span ref={sizeBadgeRef}>
+                <Badge
+                  onClick={() => {
+                    setOpenSize((v) => !v);
+                    setOpenColor(false);
+                    setOpenWeight(false);
+                  }}
+                  variant="secondary"
+                  className="cursor-pointer text-xs px-2.5 py-1.5 rounded-full text-white bg-white/10 hover:bg-white/15 transition inline-flex items-center"
+                  style={{
+                    border: openSize
+                      ? "1px solid rgba(255,255,255,0.3)"
+                      : "1px solid transparent",
+                  }}
+                >
+                  <CaseUpper className="mr-1 h-3.5 w-3.5" />
+                  Size
+                </Badge>
+              </span>
+
+              <span ref={weightBadgeRef}>
+                <Badge
+                  onClick={() => {
+                    setOpenWeight((v) => !v);
+                    setOpenColor(false);
+                    setOpenSize(false);
+                  }}
+                  variant="secondary"
+                  className="cursor-pointer text-xs px-2.5 py-1.5 rounded-full text-white bg-white/10 hover:bg-white/15 transition inline-flex items-center"
+                  style={{
+                    border: openWeight
+                      ? "1px solid rgba(255,255,255,0.3)"
+                      : "1px solid transparent",
+                  }}
+                >
+                  <BoldIcon className="mr-1 h-3.5 w-3.5" />
+                  Weight
+                </Badge>
+              </span>
+            </div>
+          </PopoverContent>
+        )}
+      </Popover>
+
+      <Popover open={openColor} onOpenChange={setOpenColor}>
+        <PopoverAnchor asChild>
+          <span ref={colorBadgeRef} />
+        </PopoverAnchor>
         <PopoverContent
-          ref={popRef}
           side="top"
           align="center"
-          sideOffset={12}
-          className="min-w-[260px] rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md shadow-[0_10px_30px_rgba(0,0,0,0.35)] p-2"
+          sideOffset={8}
+          collisionPadding={16}
+          data-subpopover="true"
+          className="min-w-[320px] rounded-2xl border border-white/10 bg-white/10 backdrop-blur-md shadow-[0_10px_30px_rgba(0,0,0,0.35)] p-3"
           onOpenAutoFocus={(e) => e.preventDefault()}
           onCloseAutoFocus={(e) => e.preventDefault()}
         >
-          <div className="flex items-center justify-center gap-2">
-            <Badge
-              variant="secondary"
-              className="text-xs px-2.5 py-1.5 rounded-full bg-white/10 hover:bg-white/15 transition"
-            >
-              <PaintBucket className="mr-1 h-3.5 w-3.5" />
-              Color
-            </Badge>
-            <Badge
-              variant="secondary"
-              className="text-xs px-2.5 py-1.5 rounded-full bg-white/10 hover:bg-white/15 transition"
-            >
-              <CaseUpper className="mr-1 h-3.5 w-3.5" />
-              Size
-            </Badge>
-            <Badge
-              variant="secondary"
-              className="text-xs px-2.5 py-1.5 rounded-full bg-white/10 hover:bg-white/15 transition"
-            >
-              <Bold className="mr-1 h-3.5 w-3.5" />
-              Weight
-            </Badge>
+          <div className="flex items-center justify-between gap-3">
+            <div
+              className="h-10 w-10 rounded-md border border-white/20"
+              style={{ background: rgbaString }}
+            />
+            <Input
+              type="color"
+              value={hexString}
+              className="h-10 w-14 p-1 cursor-pointer bg-transparent"
+              onChange={(e) => applyNativeColor(e.target.value)}
+              aria-label="Pick color"
+            />
+            <div className="flex-1">
+              <Input
+                value={hexString}
+                onChange={(e) => applyHex(e.target.value)}
+                className="h-8 mt-1 text-white"
+                spellCheck={false}
+              />
+            </div>
           </div>
-          <div className="mt-2 text-[10px] text-white/70 text-center">
-            Enter to save · Esc to cancel
+          <div className="mt-3 flex flex-wrap gap-2">
+            {[
+              "#ffffff",
+              "#000000",
+              "#f43f5e",
+              "#f59e0b",
+              "#10b981",
+              "#3b82f6",
+              "#8b5cf6",
+              "#14b8a6",
+              "#e11d48",
+            ].map((hex) => (
+              <button
+                key={hex}
+                onClick={() => applyHex(hex)}
+                className="h-7 w-7 rounded-md border border-white/20"
+                style={{ background: hex }}
+                aria-label={`Preset ${hex}`}
+              />
+            ))}
+          </div>
+          <div className="mt-3">
+            <div className="flex items-center justify-between text-xs text-white/80 mb-2">
+              <span>Opacity</span>
+              <span>{Math.round(a * 100)}%</span>
+            </div>
+            <Slider
+              value={[a]}
+              min={0}
+              max={1}
+              step={0.01}
+              onValueChange={(val) => applyAlpha(val)}
+            />
           </div>
         </PopoverContent>
-      )}
-    </Popover>
+      </Popover>
+
+      <Popover open={openSize} onOpenChange={setOpenSize}>
+        <PopoverAnchor asChild>
+          <span ref={sizeBadgeRef} />
+        </PopoverAnchor>
+        <PopoverContent
+          side="left"
+          align="center"
+          sideOffset={12}
+          alignOffset={4}
+          collisionPadding={16}
+          avoidCollisions
+          data-subpopover="true"
+          className="min-w-[280px] rounded-2xl border border-white/10 bg-white/10 backdrop-blur-md shadow-[0_10px_30px_rgba(0,0,0,0.35)] p-3"
+          onOpenAutoFocus={(e) => e.preventDefault()}
+          onCloseAutoFocus={(e) => e.preventDefault()}
+        >
+          <div className="flex items-center justify-between text-xs text-white/80">
+            <span>Font size</span>
+            <Input
+              type="number"
+              value={Math.round(value.headingFontSize ?? 20)}
+              min={10}
+              max={128}
+              className="h-7 w-16"
+              onChange={(e) => applySize([Number(e.target.value)])}
+            />
+          </div>
+          <div className="mt-2">
+            <Slider
+              value={[Math.round(value.headingFontSize ?? 20)]}
+              min={10}
+              max={128}
+              step={1}
+              onValueChange={applySize}
+            />
+          </div>
+        </PopoverContent>
+      </Popover>
+
+      <Popover open={openWeight} onOpenChange={setOpenWeight}>
+        <PopoverAnchor asChild>
+          <span ref={weightBadgeRef} />
+        </PopoverAnchor>
+        <PopoverContent
+          side="left"
+          align="center"
+          data-subpopover="true"
+          className="min-w-[300px] rounded-2xl border border-white/10 bg-white/10 backdrop-blur-md shadow-[0_10px_30px_rgba(0,0,0,0.35)] p-3"
+          onOpenAutoFocus={(e) => e.preventDefault()}
+          onCloseAutoFocus={(e) => e.preventDefault()}
+        >
+          <div className="text-xs text-white/80 mb-2">Font weight</div>
+          <div className="grid grid-cols-4 gap-2">
+            {([400, 500, 600, 700] as const).map((w) => {
+              const active = currentWeight === w;
+              return (
+                <Button
+                  key={w}
+                  size="sm"
+                  variant={active ? "default" : "secondary"}
+                  className="rounded-full"
+                  style={{ fontWeight: w }}
+                  onClick={() => setWeight(w)}
+                >
+                  {w}
+                </Button>
+              );
+            })}
+          </div>
+        </PopoverContent>
+      </Popover>
+    </>
   );
+}
+
+function clamp(n: number, min: number, max: number) {
+  return Math.min(max, Math.max(min, n));
+}
+function parseColorToRgba(input?: string) {
+  if (!input) return { r: 255, g: 255, b: 255, a: 1 };
+  const rgba = input.match(
+    /rgba?\s*\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})(?:\s*,\s*(\d*\.?\d+))?\s*\)/i
+  );
+  if (rgba) {
+    const r = clamp(parseInt(rgba[1], 10), 0, 255),
+      g = clamp(parseInt(rgba[2], 10), 0, 255),
+      b = clamp(parseInt(rgba[3], 10), 0, 255),
+      a = rgba[4] !== undefined ? clamp(parseFloat(rgba[4]), 0, 1) : 1;
+    return { r, g, b, a };
+  }
+  const hex = input.trim();
+  if (/^#([0-9a-f]{3})$/i.test(hex)) {
+    const h = hex.slice(1);
+    return {
+      r: parseInt(h[0] + h[0], 16),
+      g: parseInt(h[1] + h[1], 16),
+      b: parseInt(h[2] + h[2], 16),
+      a: 1,
+    };
+  }
+  if (/^#([0-9a-f]{6})$/i.test(hex)) {
+    const h = hex.slice(1);
+    return {
+      r: parseInt(h.slice(0, 2), 16),
+      g: parseInt(h.slice(2, 4), 16),
+      b: parseInt(h.slice(4, 6), 16),
+      a: 1,
+    };
+  }
+  return { r: 255, g: 255, b: 255, a: 1 };
+}
+function rgbToHex(r: number, g: number, b: number) {
+  const toHex = (n: number) =>
+    clamp(Math.round(n), 0, 255).toString(16).padStart(2, "0");
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+}
+function hexToRgbSafe(hex: string) {
+  const c = hex.trim().toLowerCase();
+  if (!/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(c)) return null;
+  let r: number, g: number, b: number;
+  if (c.length === 4) {
+    r = parseInt(c[1] + c[1], 16);
+    g = parseInt(c[2] + c[2], 16);
+    b = parseInt(c[3] + c[3], 16);
+  } else {
+    r = parseInt(c.slice(1, 3), 16);
+    g = parseInt(c.slice(3, 5), 16);
+    b = parseInt(c.slice(5, 7), 16);
+  }
+  return { r, g, b };
 }

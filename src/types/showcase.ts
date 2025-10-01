@@ -1,4 +1,5 @@
 export type ShowcaseProps = {
+  headingWeight: 400 | 500 | 600 | 700;
   headingText: string;
   headingColor: string;
   headingFontSize: number;
