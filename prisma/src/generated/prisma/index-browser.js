@@ -125,19 +125,9 @@ exports.Prisma.ComponentScalarFieldEnum = {
   name: 'name',
   sourceCode: 'sourceCode',
   props: 'props',
-  rev: 'rev',
   schemaVer: 'schemaVer',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
-};
-
-exports.Prisma.ComponentVersionScalarFieldEnum = {
-  id: 'id',
-  componentId: 'componentId',
-  rev: 'rev',
-  sourceCode: 'sourceCode',
-  props: 'props',
-  createdAt: 'createdAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -162,8 +152,7 @@ exports.Prisma.JsonNullValueFilter = {
 
 
 exports.Prisma.ModelName = {
-  Component: 'Component',
-  ComponentVersion: 'ComponentVersion'
+  Component: 'Component'
 };
 
 /**

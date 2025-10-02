@@ -1,6 +1,10 @@
 "use client";
 
-import { initialShowcaseProps, ShowcaseProps, TextToken } from "@/types";
+import {
+  initialShowcaseProps,
+  type ShowcaseProps,
+  type TextToken,
+} from "@/types";
 import { useEffect, useMemo, useState } from "react";
 import HeadingInlineEditor from "./editor-toolbar";
 
@@ -14,8 +18,8 @@ type Props = {
 const CACHE_KEY = "runable.showcase.cache";
 
 /** Safely read cached props regardless of shape:
- * - { id, name, rev, sourceCode, props: { tokens: ... } }  <-- ComponentRecord (your EditorShell)
- * - { tokens: ... }                                       <-- raw ShowcaseProps (older code)
+ * - { id, name, rev, sourceCode, props: { tokens: ... } }  <-- ComponentRecord
+ * - { tokens: ... }                                       <-- raw ShowcaseProps
  */
 function readCachedProps(): ShowcaseProps | null {
   if (typeof window === "undefined") return null;
@@ -96,12 +100,16 @@ export default function TitleEditor({
   const tokenValue: TextToken = tokens[token] ?? fallback;
 
   function handleChange(nextFlat: TextToken) {
-    onChange({
+    // Merge into a FULL ShowcaseProps so we don't drop other fields
+    const base = value ?? initialShowcaseProps;
+    const next: ShowcaseProps = {
+      ...base,
       tokens: {
-        ...tokens,
+        ...base.tokens,
         [token]: nextFlat,
       },
-    });
+    };
+    onChange(next);
   }
 
   return (

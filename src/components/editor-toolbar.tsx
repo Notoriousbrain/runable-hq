@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-
 import {
   Popover,
   PopoverContent,
@@ -12,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
 import { PaintBucket, CaseUpper, Bold as BoldIcon } from "lucide-react";
-import { TextToken } from "@/types";
+import type { TextToken } from "@/types";
 
 type Props = {
   value: TextToken;
@@ -36,9 +35,10 @@ export default function HeadingInlineEditor({
 
   const hRef = useRef<HTMLHeadingElement | null>(null);
   const popMainRef = useRef<HTMLDivElement | null>(null);
-  const colorBadgeRef = useRef<HTMLSpanElement | null>(null);
-  const sizeBadgeRef = useRef<HTMLSpanElement | null>(null);
-  const weightBadgeRef = useRef<HTMLSpanElement | null>(null);
+  // Only use these refs for PopoverAnchor targets (not in the toolbar itself)
+  const colorBadgeAnchorRef = useRef<HTMLSpanElement | null>(null);
+  const sizeBadgeAnchorRef = useRef<HTMLSpanElement | null>(null);
+  const weightBadgeAnchorRef = useRef<HTMLSpanElement | null>(null);
 
   const [localText, setLocalText] = useState(value.title ?? "");
 
@@ -95,7 +95,7 @@ export default function HeadingInlineEditor({
     );
   }, [editing, localText]);
 
-  // Click-away to stop editing
+  // Click-away to stop editing (but allow clicks inside any subpopover)
   useEffect(() => {
     if (!editing) return;
     const onDown = (e: MouseEvent) => {
@@ -138,11 +138,13 @@ export default function HeadingInlineEditor({
     applyHex(hex);
   }
   function applyAlpha(val: number[]) {
-    applyColor({ a: val[0] });
+    const v = Array.isArray(val) && typeof val[0] === "number" ? val[0] : a;
+    applyColor({ a: v });
   }
 
   function applySize(px: number[]) {
-    const n = clamp(px[0], 10, 128);
+    const raw = Array.isArray(px) ? px[0] : Number(px);
+    const n = clamp(Number.isFinite(raw) ? raw : value.fontSize ?? 20, 10, 128);
     onChange({ ...value, fontSize: n });
   }
 
@@ -150,6 +152,16 @@ export default function HeadingInlineEditor({
   function setWeight(w: TextToken["weight"]) {
     setLocalWeight(w); // immediate visual
     onChange({ ...value, weight: w });
+  }
+
+  // Insert plain text at current caret in a contentEditable node
+  function insertAtCaret(text: string) {
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    sel.deleteFromDocument();
+    sel.getRangeAt(0).insertNode(document.createTextNode(text));
+    // Move caret after inserted text
+    sel.collapseToEnd();
   }
 
   return (
@@ -174,11 +186,14 @@ export default function HeadingInlineEditor({
             }}
             onPaste={(e) => {
               e.preventDefault();
-              document.execCommand(
-                "insertText",
-                false,
-                e.clipboardData.getData("text/plain")
-              );
+              const text = e.clipboardData?.getData("text/plain") ?? "";
+              insertAtCaret(text);
+              const el = hRef.current;
+              if (el) {
+                const t = el.innerText;
+                setLocalText(t);
+                onChange({ ...value, title: t.trim().replace(/\s+/g, " ") });
+              }
             }}
             onInput={(e) => {
               const t = (e.target as HTMLElement).innerText;
@@ -217,74 +232,69 @@ export default function HeadingInlineEditor({
             onCloseAutoFocus={(e) => e.preventDefault()}
           >
             <div className="flex items-center justify-center gap-2">
-              <span ref={colorBadgeRef}>
-                <Badge
-                  onClick={() => {
-                    setOpenColor((v) => !v);
-                    setOpenSize(false);
-                    setOpenWeight(false);
-                  }}
-                  variant="secondary"
-                  className="cursor-pointer text-xs px-2.5 py-1.5 rounded-full text-white bg-white/10 hover:bg-white/15 transition inline-flex items-center"
-                  style={{
-                    border: openColor
-                      ? "1px solid rgba(255,255,255,0.3)"
-                      : "1px solid transparent",
-                  }}
-                >
-                  <PaintBucket className="mr-1 h-3.5 w-3.5" />
-                  Color
-                </Badge>
-              </span>
+              {/* Toolbar badges (no refs here) */}
+              <Badge
+                onClick={() => {
+                  setOpenColor((v) => !v);
+                  setOpenSize(false);
+                  setOpenWeight(false);
+                }}
+                variant="secondary"
+                className="cursor-pointer text-xs px-2.5 py-1.5 rounded-full text-white bg-white/10 hover:bg-white/15 transition inline-flex items-center"
+                style={{
+                  border: openColor
+                    ? "1px solid rgba(255,255,255,0.3)"
+                    : "1px solid transparent",
+                }}
+              >
+                <PaintBucket className="mr-1 h-3.5 w-3.5" />
+                Color
+              </Badge>
 
-              <span ref={sizeBadgeRef}>
-                <Badge
-                  onClick={() => {
-                    setOpenSize((v) => !v);
-                    setOpenColor(false);
-                    setOpenWeight(false);
-                  }}
-                  variant="secondary"
-                  className="cursor-pointer text-xs px-2.5 py-1.5 rounded-full text-white bg-white/10 hover:bg-white/15 transition inline-flex items-center"
-                  style={{
-                    border: openSize
-                      ? "1px solid rgba(255,255,255,0.3)"
-                      : "1px solid transparent",
-                  }}
-                >
-                  <CaseUpper className="mr-1 h-3.5 w-3.5" />
-                  Size
-                </Badge>
-              </span>
+              <Badge
+                onClick={() => {
+                  setOpenSize((v) => !v);
+                  setOpenColor(false);
+                  setOpenWeight(false);
+                }}
+                variant="secondary"
+                className="cursor-pointer text-xs px-2.5 py-1.5 rounded-full text-white bg-white/10 hover:bg-white/15 transition inline-flex items-center"
+                style={{
+                  border: openSize
+                    ? "1px solid rgba(255,255,255,0.3)"
+                    : "1px solid transparent",
+                }}
+              >
+                <CaseUpper className="mr-1 h-3.5 w-3.5" />
+                Size
+              </Badge>
 
-              <span ref={weightBadgeRef}>
-                <Badge
-                  onClick={() => {
-                    setOpenWeight((v) => !v);
-                    setOpenColor(false);
-                    setOpenSize(false);
-                  }}
-                  variant="secondary"
-                  className="cursor-pointer text-xs px-2.5 py-1.5 rounded-full text-white bg-white/10 hover:bg-white/15 transition inline-flex items-center"
-                  style={{
-                    border: openWeight
-                      ? "1px solid rgba(255,255,255,0.3)"
-                      : "1px solid transparent",
-                  }}
-                >
-                  <BoldIcon className="mr-1 h-3.5 w-3.5" />
-                  Weight
-                </Badge>
-              </span>
+              <Badge
+                onClick={() => {
+                  setOpenWeight((v) => !v);
+                  setOpenColor(false);
+                  setOpenSize(false);
+                }}
+                variant="secondary"
+                className="cursor-pointer text-xs px-2.5 py-1.5 rounded-full text-white bg-white/10 hover:bg-white/15 transition inline-flex items-center"
+                style={{
+                  border: openWeight
+                    ? "1px solid rgba(255,255,255,0.3)"
+                    : "1px solid transparent",
+                }}
+              >
+                <BoldIcon className="mr-1 h-3.5 w-3.5" />
+                Weight
+              </Badge>
             </div>
           </PopoverContent>
         )}
       </Popover>
 
-      {/* COLOR POPOVER */}
+      {/* COLOR POPOVER (anchored) */}
       <Popover open={openColor} onOpenChange={setOpenColor}>
         <PopoverAnchor asChild>
-          <span ref={colorBadgeRef} />
+          <span ref={colorBadgeAnchorRef} />
         </PopoverAnchor>
         <PopoverContent
           side="top"
@@ -292,7 +302,7 @@ export default function HeadingInlineEditor({
           sideOffset={8}
           collisionPadding={16}
           data-subpopover="true"
-          className="min-w-[320px] rounded-2xl border border-white/10 bg-white/10 backdrop-blur-md shadow-[0_10px_30px_rgba(0,0,0,0.35)] p-3"
+          className="min-w=[320px] rounded-2xl border border-white/10 bg-white/10 backdrop-blur-md shadow-[0_10px_30px_rgba(0,0,0,0.35)] p-3"
           onOpenAutoFocus={(e) => e.preventDefault()}
           onCloseAutoFocus={(e) => e.preventDefault()}
         >
@@ -348,16 +358,16 @@ export default function HeadingInlineEditor({
               min={0}
               max={1}
               step={0.01}
-              onValueChange={(val) => applyAlpha(val)}
+              onValueChange={applyAlpha}
             />
           </div>
         </PopoverContent>
       </Popover>
 
-      {/* SIZE POPOVER */}
+      {/* SIZE POPOVER (anchored) */}
       <Popover open={openSize} onOpenChange={setOpenSize}>
         <PopoverAnchor asChild>
-          <span ref={sizeBadgeRef} />
+          <span ref={sizeBadgeAnchorRef} />
         </PopoverAnchor>
         <PopoverContent
           side="left"
@@ -394,10 +404,10 @@ export default function HeadingInlineEditor({
         </PopoverContent>
       </Popover>
 
-      {/* WEIGHT POPOVER */}
+      {/* WEIGHT POPOVER (anchored) */}
       <Popover open={openWeight} onOpenChange={setOpenWeight}>
         <PopoverAnchor asChild>
-          <span ref={weightBadgeRef} />
+          <span ref={weightBadgeAnchorRef} />
         </PopoverAnchor>
         <PopoverContent
           side="left"

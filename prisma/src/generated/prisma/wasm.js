@@ -97,19 +97,9 @@ exports.Prisma.ComponentScalarFieldEnum = {
   name: 'name',
   sourceCode: 'sourceCode',
   props: 'props',
-  rev: 'rev',
   schemaVer: 'schemaVer',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
-};
-
-exports.Prisma.ComponentVersionScalarFieldEnum = {
-  id: 'id',
-  componentId: 'componentId',
-  rev: 'rev',
-  sourceCode: 'sourceCode',
-  props: 'props',
-  createdAt: 'createdAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -134,8 +124,7 @@ exports.Prisma.JsonNullValueFilter = {
 
 
 exports.Prisma.ModelName = {
-  Component: 'Component',
-  ComponentVersion: 'ComponentVersion'
+  Component: 'Component'
 };
 /**
  * Create the Client
@@ -176,7 +165,6 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
-  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -185,13 +173,13 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"./src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel Component {\n  id         String   @id @default(cuid())\n  name       String   @default(\"Untitled Component\")\n  sourceCode String   @db.Text\n  props      Json     @default(\"{}\")\n  rev        Int      @default(1)\n  schemaVer  Int      @default(1)\n  createdAt  DateTime @default(now())\n  updatedAt  DateTime @updatedAt\n\n  @@index([updatedAt])\n}\n\nmodel ComponentVersion {\n  id          String   @id @default(cuid())\n  componentId String\n  rev         Int\n  sourceCode  String   @db.Text\n  props       Json\n  createdAt   DateTime @default(now())\n\n  @@index([componentId, rev], map: \"component_rev_idx\")\n}\n",
-  "inlineSchemaHash": "38bb8ea2d54dea87fb7755ec2773f9202fcf3d035589b8c92a955e96aa87ece8",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"./src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel Component {\n  id         String   @id @default(cuid())\n  name       String   @default(\"Untitled Component\")\n  sourceCode String   @db.Text\n  props      Json     @default(\"{}\")\n  schemaVer  Int      @default(1)\n  createdAt  DateTime @default(now())\n  updatedAt  DateTime @updatedAt\n\n  @@index([updatedAt])\n}\n",
+  "inlineSchemaHash": "50bcbf2ba47282d192bcaee8c2cb9057589562cfca1812483b8e7dc7924b1d5d",
   "copyEngine": true
 }
 config.dirname = '/'
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"Component\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"sourceCode\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"props\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"rev\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"schemaVer\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"ComponentVersion\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"componentId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"rev\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"sourceCode\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"props\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"Component\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"sourceCode\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"props\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"schemaVer\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.engineWasm = {
   getRuntime: async () => require('./query_engine_bg.js'),

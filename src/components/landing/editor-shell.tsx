@@ -23,6 +23,11 @@ const CONTENT_SPACING = 8;
 
 const CACHE_KEY = "runable.showcase.cache";
 
+function clearShowcaseCache() {
+  try {
+    localStorage.removeItem(CACHE_KEY);
+  } catch {}
+}
 type Ctx = {
   showcaseRecord: ComponentRecord<ShowcaseProps>;
   setShowcaseRecord: React.Dispatch<
@@ -50,6 +55,7 @@ function safeReadCache(): ComponentRecord<ShowcaseProps> | null {
   }
 }
 
+// Stable local placeholder to avoid hydration mismatch.
 const STABLE_DEFAULT_DOC: ComponentRecord<ShowcaseProps> = {
   id: "shared-doc",
   name: "ShowcaseSection",
@@ -59,6 +65,9 @@ const STABLE_DEFAULT_DOC: ComponentRecord<ShowcaseProps> = {
 } as ComponentRecord<ShowcaseProps>;
 
 export default function EditorShell({ children }: PropsWithChildren) {
+  const [hydrated, setHydrated] = useState(false);
+
+  // Resolve the *shared* component id (query param > env)
   const searchParams =
     typeof window !== "undefined"
       ? new URLSearchParams(window.location.search)
@@ -68,15 +77,15 @@ export default function EditorShell({ children }: PropsWithChildren) {
     typeof process !== "undefined"
       ? process.env.NEXT_PUBLIC_SHOWCASE_ID ?? ""
       : "";
+  // compute once; the fetch effect below re-resolves anyway
   const sharedId = useMemo(() => idFromQuery || idFromEnv, []);
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const sidebarWidth = sidebarOpen ? SIDEBAR_WIDTH : 0;
-  
-  const cached = safeReadCache();
-  const [doc, setDoc] = useState<ComponentRecord<ShowcaseProps>>(
-    cached ?? STABLE_DEFAULT_DOC
-  );
+
+  // 🔧 Start with SSR-safe default (NO cache here)
+  const [doc, setDoc] =
+    useState<ComponentRecord<ShowcaseProps>>(STABLE_DEFAULT_DOC);
   const [error, setError] = useState<string | null>(null);
 
   // Hydration guard
@@ -88,6 +97,12 @@ export default function EditorShell({ children }: PropsWithChildren) {
       : false;
 
   useEffect(() => {
+    setHydrated(true);
+    const cached = safeReadCache();
+    if (cached) setDoc(cached);
+  }, []);
+
+  useEffect(() => {
     if (hydratedOnceRef.current) return;
     hydratedOnceRef.current = true;
 
@@ -95,7 +110,6 @@ export default function EditorShell({ children }: PropsWithChildren) {
 
     (async () => {
       try {
-        // 1) Resolve the id (URL > env)
         const urlParams =
           typeof window !== "undefined"
             ? new URLSearchParams(window.location.search)
@@ -108,15 +122,38 @@ export default function EditorShell({ children }: PropsWithChildren) {
         const resolvedId = idFromQuery || idFromEnv;
 
         if (resolvedId) {
-          // fetch the shared doc
-          const rec = await getComponent<ShowcaseProps>(resolvedId);
-          if (!alive) return;
-          setDoc(rec);
-          writeShowcaseCache(rec);
-          return;
+          try {
+            const rec = await getComponent<ShowcaseProps>(resolvedId);
+            if (!alive) return;
+            setDoc(rec);
+            writeShowcaseCache(rec);
+            return;
+          } catch (e) {
+            const err = e as { code?: number; message?: string };
+            if (err?.code === 404) {
+              // cached/shared id is stale → clear and recover
+              clearShowcaseCache();
+              if (ALLOW_CREATE_IF_MISSING) {
+                const created = await createComponent<ShowcaseProps>({
+                  name: "ShowcaseSection",
+                  sourceCode: STABLE_DEFAULT_DOC.sourceCode,
+                  props: STABLE_DEFAULT_DOC.props,
+                });
+                if (!alive) return;
+                setDoc(created);
+                writeShowcaseCache(created);
+                console.info("Created new shared component id:", created.id);
+                return;
+              }
+              if (!alive) return;
+              setError("The requested document was not found.");
+              // keep showing STABLE_DEFAULT_DOC
+              return;
+            }
+            throw e; // rethrow non-404s
+          }
         }
 
-        // 2) No id given: create only if allowed
         if (ALLOW_CREATE_IF_MISSING) {
           const created = await createComponent<ShowcaseProps>({
             name: "ShowcaseSection",
@@ -126,12 +163,10 @@ export default function EditorShell({ children }: PropsWithChildren) {
           if (!alive) return;
           setDoc(created);
           writeShowcaseCache(created);
-          // You can also log/flash the new id so you can set it in .env later
           console.info("Created shared component id:", created.id);
           return;
         }
 
-        // 3) Otherwise, show the helpful error
         setError(
           "No shared document id. Provide NEXT_PUBLIC_SHOWCASE_ID or ?doc=<id>."
         );
@@ -147,31 +182,6 @@ export default function EditorShell({ children }: PropsWithChildren) {
       alive = false;
     };
   }, []);
-
-  // 2) Real-time sync (polling): every 3s, pull server and apply if rev advanced
-  useEffect(() => {
-    if (!sharedId) return;
-    let alive = true;
-
-    const tick = async () => {
-      try {
-        const rec = await getComponent<ShowcaseProps>(sharedId);
-        if (!alive) return;
-        if (rec.rev > doc.rev) {
-          setDoc(rec);
-          writeShowcaseCache(rec);
-        }
-      } catch {
-        // network errors ignored for polling
-      }
-    };
-
-    const id = window.setInterval(tick, 3000);
-    return () => {
-      alive = false;
-      window.clearInterval(id);
-    };
-  }, [sharedId, doc.rev]);
 
   // 3) Also write cache whenever doc changes locally
   useEffect(() => {
@@ -229,7 +239,11 @@ export default function EditorShell({ children }: PropsWithChildren) {
             </button>
 
             <div className="px-4 text-[11px] text-white/50">
-              ID: {doc.id} • Rev: {doc.rev}
+              {/* 👇 prevent SSR/CSR mismatch for ID/Rev */}
+              <span suppressHydrationWarning>
+                ID: {hydrated ? doc.id : STABLE_DEFAULT_DOC.id} • Rev:{" "}
+                {hydrated ? doc.rev : STABLE_DEFAULT_DOC.rev}
+              </span>
               {error ? (
                 <span className="ml-2 text-red-400">• {error}</span>
               ) : null}

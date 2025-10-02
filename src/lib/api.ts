@@ -1,3 +1,4 @@
+// src/lib/api.ts
 import type { Json } from "@/types/json";
 
 export type ComponentRecord<TProps = Json> = {
@@ -14,24 +15,31 @@ export type ComponentRecord<TProps = Json> = {
 export type UpdateConflictError<TProps = Json> = Error & {
   code?: number;
   data?: { serverRev: number; server: { sourceCode: string; props: TProps } };
+  body?: unknown; // <- carry server JSON body through for other errors (404, etc.)
 };
 
 async function json<T>(res: Response): Promise<T> {
   if (!res.ok) {
-    let body = null;
+    let body: unknown = null;
     try {
       body = await res.json();
     } catch {}
-    const err = new Error(body?.error || res.statusText) as UpdateConflictError;
+    const msg =
+      (body && typeof body === "object" && body.error) ||
+      res.statusText ||
+      "Request failed";
+    const err = new Error(msg) as UpdateConflictError;
     err.code = res.status;
-    if (res.status === 409 && body?.data) {
+    if (res.status === 409 && body && typeof body === "object") {
       err.data = body.data;
     }
+    err.body = body;
     throw err;
   }
   return res.json();
 }
 
+/** Read a component by id */
 export async function getComponent<TProps = Json>(
   id: string
 ): Promise<ComponentRecord<TProps>> {
@@ -41,6 +49,7 @@ export async function getComponent<TProps = Json>(
   return json<ComponentRecord<TProps>>(res);
 }
 
+/** Create a component (used only when allowed) */
 export async function createComponent<TProps = Json>(input: {
   id?: string;
   name?: string;
@@ -56,6 +65,7 @@ export async function createComponent<TProps = Json>(input: {
   return json<ComponentRecord<TProps>>(res);
 }
 
+/** Update with optimistic concurrency */
 export async function updateComponent<TProps = Json>(
   id: string,
   data: {
