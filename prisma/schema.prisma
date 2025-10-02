@@ -7,14 +7,13 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-model Component {
-  id         String   @id @default(cuid())
-  name       String   @default("Untitled Component")
-  sourceCode String   @db.Text
-  props      Json     @default("{}")      
-  schemaVer  Int      @default(1)        
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
 
-  @@index([updatedAt])
+model TitleComponent {
+  id        String   @id @default(cuid())
+  text      String
+  color     String   
+  size      Int      
+  weight    Int      
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
 }

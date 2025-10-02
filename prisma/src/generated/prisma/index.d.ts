@@ -14,10 +14,10 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
 
 
 /**
- * Model Component
+ * Model TitleComponent
  * 
  */
-export type Component = $Result.DefaultSelection<Prisma.$ComponentPayload>
+export type TitleComponent = $Result.DefaultSelection<Prisma.$TitleComponentPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -26,8 +26,8 @@ export type Component = $Result.DefaultSelection<Prisma.$ComponentPayload>
  * @example
  * ```
  * const prisma = new PrismaClient()
- * // Fetch zero or more Components
- * const components = await prisma.component.findMany()
+ * // Fetch zero or more TitleComponents
+ * const titleComponents = await prisma.titleComponent.findMany()
  * ```
  *
  *
@@ -47,8 +47,8 @@ export class PrismaClient<
    * @example
    * ```
    * const prisma = new PrismaClient()
-   * // Fetch zero or more Components
-   * const components = await prisma.component.findMany()
+   * // Fetch zero or more TitleComponents
+   * const titleComponents = await prisma.titleComponent.findMany()
    * ```
    *
    *
@@ -138,14 +138,14 @@ export class PrismaClient<
   }>>
 
       /**
-   * `prisma.component`: Exposes CRUD operations for the **Component** model.
+   * `prisma.titleComponent`: Exposes CRUD operations for the **TitleComponent** model.
     * Example usage:
     * ```ts
-    * // Fetch zero or more Components
-    * const components = await prisma.component.findMany()
+    * // Fetch zero or more TitleComponents
+    * const titleComponents = await prisma.titleComponent.findMany()
     * ```
     */
-  get component(): Prisma.ComponentDelegate<ExtArgs, ClientOptions>;
+  get titleComponent(): Prisma.TitleComponentDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -586,7 +586,7 @@ export namespace Prisma {
 
 
   export const ModelName: {
-    Component: 'Component'
+    TitleComponent: 'TitleComponent'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -605,81 +605,81 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "component"
+      modelProps: "titleComponent"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
-      Component: {
-        payload: Prisma.$ComponentPayload<ExtArgs>
-        fields: Prisma.ComponentFieldRefs
+      TitleComponent: {
+        payload: Prisma.$TitleComponentPayload<ExtArgs>
+        fields: Prisma.TitleComponentFieldRefs
         operations: {
           findUnique: {
-            args: Prisma.ComponentFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ComponentPayload> | null
+            args: Prisma.TitleComponentFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TitleComponentPayload> | null
           }
           findUniqueOrThrow: {
-            args: Prisma.ComponentFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ComponentPayload>
+            args: Prisma.TitleComponentFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TitleComponentPayload>
           }
           findFirst: {
-            args: Prisma.ComponentFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ComponentPayload> | null
+            args: Prisma.TitleComponentFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TitleComponentPayload> | null
           }
           findFirstOrThrow: {
-            args: Prisma.ComponentFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ComponentPayload>
+            args: Prisma.TitleComponentFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TitleComponentPayload>
           }
           findMany: {
-            args: Prisma.ComponentFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ComponentPayload>[]
+            args: Prisma.TitleComponentFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TitleComponentPayload>[]
           }
           create: {
-            args: Prisma.ComponentCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ComponentPayload>
+            args: Prisma.TitleComponentCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TitleComponentPayload>
           }
           createMany: {
-            args: Prisma.ComponentCreateManyArgs<ExtArgs>
+            args: Prisma.TitleComponentCreateManyArgs<ExtArgs>
             result: BatchPayload
           }
           createManyAndReturn: {
-            args: Prisma.ComponentCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ComponentPayload>[]
+            args: Prisma.TitleComponentCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TitleComponentPayload>[]
           }
           delete: {
-            args: Prisma.ComponentDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ComponentPayload>
+            args: Prisma.TitleComponentDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TitleComponentPayload>
           }
           update: {
-            args: Prisma.ComponentUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ComponentPayload>
+            args: Prisma.TitleComponentUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TitleComponentPayload>
           }
           deleteMany: {
-            args: Prisma.ComponentDeleteManyArgs<ExtArgs>
+            args: Prisma.TitleComponentDeleteManyArgs<ExtArgs>
             result: BatchPayload
           }
           updateMany: {
-            args: Prisma.ComponentUpdateManyArgs<ExtArgs>
+            args: Prisma.TitleComponentUpdateManyArgs<ExtArgs>
             result: BatchPayload
           }
           updateManyAndReturn: {
-            args: Prisma.ComponentUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ComponentPayload>[]
+            args: Prisma.TitleComponentUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TitleComponentPayload>[]
           }
           upsert: {
-            args: Prisma.ComponentUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ComponentPayload>
+            args: Prisma.TitleComponentUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TitleComponentPayload>
           }
           aggregate: {
-            args: Prisma.ComponentAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateComponent>
+            args: Prisma.TitleComponentAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTitleComponent>
           }
           groupBy: {
-            args: Prisma.ComponentGroupByArgs<ExtArgs>
-            result: $Utils.Optional<ComponentGroupByOutputType>[]
+            args: Prisma.TitleComponentGroupByArgs<ExtArgs>
+            result: $Utils.Optional<TitleComponentGroupByOutputType>[]
           }
           count: {
-            args: Prisma.ComponentCountArgs<ExtArgs>
-            result: $Utils.Optional<ComponentCountAggregateOutputType> | number
+            args: Prisma.TitleComponentCountArgs<ExtArgs>
+            result: $Utils.Optional<TitleComponentCountAggregateOutputType> | number
           }
         }
       }
@@ -779,7 +779,7 @@ export namespace Prisma {
     omit?: Prisma.GlobalOmitConfig
   }
   export type GlobalOmitConfig = {
-    component?: ComponentOmit
+    titleComponent?: TitleComponentOmit
   }
 
   /* Types for Logging */
@@ -861,390 +861,398 @@ export namespace Prisma {
    */
 
   /**
-   * Model Component
+   * Model TitleComponent
    */
 
-  export type AggregateComponent = {
-    _count: ComponentCountAggregateOutputType | null
-    _avg: ComponentAvgAggregateOutputType | null
-    _sum: ComponentSumAggregateOutputType | null
-    _min: ComponentMinAggregateOutputType | null
-    _max: ComponentMaxAggregateOutputType | null
+  export type AggregateTitleComponent = {
+    _count: TitleComponentCountAggregateOutputType | null
+    _avg: TitleComponentAvgAggregateOutputType | null
+    _sum: TitleComponentSumAggregateOutputType | null
+    _min: TitleComponentMinAggregateOutputType | null
+    _max: TitleComponentMaxAggregateOutputType | null
   }
 
-  export type ComponentAvgAggregateOutputType = {
-    schemaVer: number | null
+  export type TitleComponentAvgAggregateOutputType = {
+    size: number | null
+    weight: number | null
   }
 
-  export type ComponentSumAggregateOutputType = {
-    schemaVer: number | null
+  export type TitleComponentSumAggregateOutputType = {
+    size: number | null
+    weight: number | null
   }
 
-  export type ComponentMinAggregateOutputType = {
+  export type TitleComponentMinAggregateOutputType = {
     id: string | null
-    name: string | null
-    sourceCode: string | null
-    schemaVer: number | null
-    createdAt: Date | null
+    text: string | null
+    color: string | null
+    size: number | null
+    weight: number | null
     updatedAt: Date | null
+    createdAt: Date | null
   }
 
-  export type ComponentMaxAggregateOutputType = {
+  export type TitleComponentMaxAggregateOutputType = {
     id: string | null
-    name: string | null
-    sourceCode: string | null
-    schemaVer: number | null
-    createdAt: Date | null
+    text: string | null
+    color: string | null
+    size: number | null
+    weight: number | null
     updatedAt: Date | null
+    createdAt: Date | null
   }
 
-  export type ComponentCountAggregateOutputType = {
+  export type TitleComponentCountAggregateOutputType = {
     id: number
-    name: number
-    sourceCode: number
-    props: number
-    schemaVer: number
-    createdAt: number
+    text: number
+    color: number
+    size: number
+    weight: number
     updatedAt: number
+    createdAt: number
     _all: number
   }
 
 
-  export type ComponentAvgAggregateInputType = {
-    schemaVer?: true
+  export type TitleComponentAvgAggregateInputType = {
+    size?: true
+    weight?: true
   }
 
-  export type ComponentSumAggregateInputType = {
-    schemaVer?: true
+  export type TitleComponentSumAggregateInputType = {
+    size?: true
+    weight?: true
   }
 
-  export type ComponentMinAggregateInputType = {
+  export type TitleComponentMinAggregateInputType = {
     id?: true
-    name?: true
-    sourceCode?: true
-    schemaVer?: true
-    createdAt?: true
+    text?: true
+    color?: true
+    size?: true
+    weight?: true
     updatedAt?: true
+    createdAt?: true
   }
 
-  export type ComponentMaxAggregateInputType = {
+  export type TitleComponentMaxAggregateInputType = {
     id?: true
-    name?: true
-    sourceCode?: true
-    schemaVer?: true
-    createdAt?: true
+    text?: true
+    color?: true
+    size?: true
+    weight?: true
     updatedAt?: true
+    createdAt?: true
   }
 
-  export type ComponentCountAggregateInputType = {
+  export type TitleComponentCountAggregateInputType = {
     id?: true
-    name?: true
-    sourceCode?: true
-    props?: true
-    schemaVer?: true
-    createdAt?: true
+    text?: true
+    color?: true
+    size?: true
+    weight?: true
     updatedAt?: true
+    createdAt?: true
     _all?: true
   }
 
-  export type ComponentAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type TitleComponentAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Filter which Component to aggregate.
+     * Filter which TitleComponent to aggregate.
      */
-    where?: ComponentWhereInput
+    where?: TitleComponentWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of Components to fetch.
+     * Determine the order of TitleComponents to fetch.
      */
-    orderBy?: ComponentOrderByWithRelationInput | ComponentOrderByWithRelationInput[]
+    orderBy?: TitleComponentOrderByWithRelationInput | TitleComponentOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
      * Sets the start position
      */
-    cursor?: ComponentWhereUniqueInput
+    cursor?: TitleComponentWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` Components from the position of the cursor.
+     * Take `±n` TitleComponents from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` Components.
+     * Skip the first `n` TitleComponents.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
-     * Count returned Components
+     * Count returned TitleComponents
     **/
-    _count?: true | ComponentCountAggregateInputType
+    _count?: true | TitleComponentCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
      * Select which fields to average
     **/
-    _avg?: ComponentAvgAggregateInputType
+    _avg?: TitleComponentAvgAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
      * Select which fields to sum
     **/
-    _sum?: ComponentSumAggregateInputType
+    _sum?: TitleComponentSumAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
      * Select which fields to find the minimum value
     **/
-    _min?: ComponentMinAggregateInputType
+    _min?: TitleComponentMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
      * Select which fields to find the maximum value
     **/
-    _max?: ComponentMaxAggregateInputType
+    _max?: TitleComponentMaxAggregateInputType
   }
 
-  export type GetComponentAggregateType<T extends ComponentAggregateArgs> = {
-        [P in keyof T & keyof AggregateComponent]: P extends '_count' | 'count'
+  export type GetTitleComponentAggregateType<T extends TitleComponentAggregateArgs> = {
+        [P in keyof T & keyof AggregateTitleComponent]: P extends '_count' | 'count'
       ? T[P] extends true
         ? number
-        : GetScalarType<T[P], AggregateComponent[P]>
-      : GetScalarType<T[P], AggregateComponent[P]>
+        : GetScalarType<T[P], AggregateTitleComponent[P]>
+      : GetScalarType<T[P], AggregateTitleComponent[P]>
   }
 
 
 
 
-  export type ComponentGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: ComponentWhereInput
-    orderBy?: ComponentOrderByWithAggregationInput | ComponentOrderByWithAggregationInput[]
-    by: ComponentScalarFieldEnum[] | ComponentScalarFieldEnum
-    having?: ComponentScalarWhereWithAggregatesInput
+  export type TitleComponentGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TitleComponentWhereInput
+    orderBy?: TitleComponentOrderByWithAggregationInput | TitleComponentOrderByWithAggregationInput[]
+    by: TitleComponentScalarFieldEnum[] | TitleComponentScalarFieldEnum
+    having?: TitleComponentScalarWhereWithAggregatesInput
     take?: number
     skip?: number
-    _count?: ComponentCountAggregateInputType | true
-    _avg?: ComponentAvgAggregateInputType
-    _sum?: ComponentSumAggregateInputType
-    _min?: ComponentMinAggregateInputType
-    _max?: ComponentMaxAggregateInputType
+    _count?: TitleComponentCountAggregateInputType | true
+    _avg?: TitleComponentAvgAggregateInputType
+    _sum?: TitleComponentSumAggregateInputType
+    _min?: TitleComponentMinAggregateInputType
+    _max?: TitleComponentMaxAggregateInputType
   }
 
-  export type ComponentGroupByOutputType = {
+  export type TitleComponentGroupByOutputType = {
     id: string
-    name: string
-    sourceCode: string
-    props: JsonValue
-    schemaVer: number
-    createdAt: Date
+    text: string
+    color: string
+    size: number
+    weight: number
     updatedAt: Date
-    _count: ComponentCountAggregateOutputType | null
-    _avg: ComponentAvgAggregateOutputType | null
-    _sum: ComponentSumAggregateOutputType | null
-    _min: ComponentMinAggregateOutputType | null
-    _max: ComponentMaxAggregateOutputType | null
+    createdAt: Date
+    _count: TitleComponentCountAggregateOutputType | null
+    _avg: TitleComponentAvgAggregateOutputType | null
+    _sum: TitleComponentSumAggregateOutputType | null
+    _min: TitleComponentMinAggregateOutputType | null
+    _max: TitleComponentMaxAggregateOutputType | null
   }
 
-  type GetComponentGroupByPayload<T extends ComponentGroupByArgs> = Prisma.PrismaPromise<
+  type GetTitleComponentGroupByPayload<T extends TitleComponentGroupByArgs> = Prisma.PrismaPromise<
     Array<
-      PickEnumerable<ComponentGroupByOutputType, T['by']> &
+      PickEnumerable<TitleComponentGroupByOutputType, T['by']> &
         {
-          [P in ((keyof T) & (keyof ComponentGroupByOutputType))]: P extends '_count'
+          [P in ((keyof T) & (keyof TitleComponentGroupByOutputType))]: P extends '_count'
             ? T[P] extends boolean
               ? number
-              : GetScalarType<T[P], ComponentGroupByOutputType[P]>
-            : GetScalarType<T[P], ComponentGroupByOutputType[P]>
+              : GetScalarType<T[P], TitleComponentGroupByOutputType[P]>
+            : GetScalarType<T[P], TitleComponentGroupByOutputType[P]>
         }
       >
     >
 
 
-  export type ComponentSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+  export type TitleComponentSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    name?: boolean
-    sourceCode?: boolean
-    props?: boolean
-    schemaVer?: boolean
-    createdAt?: boolean
+    text?: boolean
+    color?: boolean
+    size?: boolean
+    weight?: boolean
     updatedAt?: boolean
-  }, ExtArgs["result"]["component"]>
+    createdAt?: boolean
+  }, ExtArgs["result"]["titleComponent"]>
 
-  export type ComponentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+  export type TitleComponentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    name?: boolean
-    sourceCode?: boolean
-    props?: boolean
-    schemaVer?: boolean
-    createdAt?: boolean
+    text?: boolean
+    color?: boolean
+    size?: boolean
+    weight?: boolean
     updatedAt?: boolean
-  }, ExtArgs["result"]["component"]>
+    createdAt?: boolean
+  }, ExtArgs["result"]["titleComponent"]>
 
-  export type ComponentSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+  export type TitleComponentSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    name?: boolean
-    sourceCode?: boolean
-    props?: boolean
-    schemaVer?: boolean
-    createdAt?: boolean
+    text?: boolean
+    color?: boolean
+    size?: boolean
+    weight?: boolean
     updatedAt?: boolean
-  }, ExtArgs["result"]["component"]>
+    createdAt?: boolean
+  }, ExtArgs["result"]["titleComponent"]>
 
-  export type ComponentSelectScalar = {
+  export type TitleComponentSelectScalar = {
     id?: boolean
-    name?: boolean
-    sourceCode?: boolean
-    props?: boolean
-    schemaVer?: boolean
-    createdAt?: boolean
+    text?: boolean
+    color?: boolean
+    size?: boolean
+    weight?: boolean
     updatedAt?: boolean
+    createdAt?: boolean
   }
 
-  export type ComponentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "sourceCode" | "props" | "schemaVer" | "createdAt" | "updatedAt", ExtArgs["result"]["component"]>
+  export type TitleComponentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "text" | "color" | "size" | "weight" | "updatedAt" | "createdAt", ExtArgs["result"]["titleComponent"]>
 
-  export type $ComponentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "Component"
+  export type $TitleComponentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "TitleComponent"
     objects: {}
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      name: string
-      sourceCode: string
-      props: Prisma.JsonValue
-      schemaVer: number
-      createdAt: Date
+      text: string
+      color: string
+      size: number
+      weight: number
       updatedAt: Date
-    }, ExtArgs["result"]["component"]>
+      createdAt: Date
+    }, ExtArgs["result"]["titleComponent"]>
     composites: {}
   }
 
-  type ComponentGetPayload<S extends boolean | null | undefined | ComponentDefaultArgs> = $Result.GetResult<Prisma.$ComponentPayload, S>
+  type TitleComponentGetPayload<S extends boolean | null | undefined | TitleComponentDefaultArgs> = $Result.GetResult<Prisma.$TitleComponentPayload, S>
 
-  type ComponentCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<ComponentFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: ComponentCountAggregateInputType | true
+  type TitleComponentCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<TitleComponentFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: TitleComponentCountAggregateInputType | true
     }
 
-  export interface ComponentDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Component'], meta: { name: 'Component' } }
+  export interface TitleComponentDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['TitleComponent'], meta: { name: 'TitleComponent' } }
     /**
-     * Find zero or one Component that matches the filter.
-     * @param {ComponentFindUniqueArgs} args - Arguments to find a Component
+     * Find zero or one TitleComponent that matches the filter.
+     * @param {TitleComponentFindUniqueArgs} args - Arguments to find a TitleComponent
      * @example
-     * // Get one Component
-     * const component = await prisma.component.findUnique({
+     * // Get one TitleComponent
+     * const titleComponent = await prisma.titleComponent.findUnique({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findUnique<T extends ComponentFindUniqueArgs>(args: SelectSubset<T, ComponentFindUniqueArgs<ExtArgs>>): Prisma__ComponentClient<$Result.GetResult<Prisma.$ComponentPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    findUnique<T extends TitleComponentFindUniqueArgs>(args: SelectSubset<T, TitleComponentFindUniqueArgs<ExtArgs>>): Prisma__TitleComponentClient<$Result.GetResult<Prisma.$TitleComponentPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find one Component that matches the filter or throw an error with `error.code='P2025'`
+     * Find one TitleComponent that matches the filter or throw an error with `error.code='P2025'`
      * if no matches were found.
-     * @param {ComponentFindUniqueOrThrowArgs} args - Arguments to find a Component
+     * @param {TitleComponentFindUniqueOrThrowArgs} args - Arguments to find a TitleComponent
      * @example
-     * // Get one Component
-     * const component = await prisma.component.findUniqueOrThrow({
+     * // Get one TitleComponent
+     * const titleComponent = await prisma.titleComponent.findUniqueOrThrow({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findUniqueOrThrow<T extends ComponentFindUniqueOrThrowArgs>(args: SelectSubset<T, ComponentFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ComponentClient<$Result.GetResult<Prisma.$ComponentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    findUniqueOrThrow<T extends TitleComponentFindUniqueOrThrowArgs>(args: SelectSubset<T, TitleComponentFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TitleComponentClient<$Result.GetResult<Prisma.$TitleComponentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find the first Component that matches the filter.
+     * Find the first TitleComponent that matches the filter.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {ComponentFindFirstArgs} args - Arguments to find a Component
+     * @param {TitleComponentFindFirstArgs} args - Arguments to find a TitleComponent
      * @example
-     * // Get one Component
-     * const component = await prisma.component.findFirst({
+     * // Get one TitleComponent
+     * const titleComponent = await prisma.titleComponent.findFirst({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findFirst<T extends ComponentFindFirstArgs>(args?: SelectSubset<T, ComponentFindFirstArgs<ExtArgs>>): Prisma__ComponentClient<$Result.GetResult<Prisma.$ComponentPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    findFirst<T extends TitleComponentFindFirstArgs>(args?: SelectSubset<T, TitleComponentFindFirstArgs<ExtArgs>>): Prisma__TitleComponentClient<$Result.GetResult<Prisma.$TitleComponentPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find the first Component that matches the filter or
+     * Find the first TitleComponent that matches the filter or
      * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {ComponentFindFirstOrThrowArgs} args - Arguments to find a Component
+     * @param {TitleComponentFindFirstOrThrowArgs} args - Arguments to find a TitleComponent
      * @example
-     * // Get one Component
-     * const component = await prisma.component.findFirstOrThrow({
+     * // Get one TitleComponent
+     * const titleComponent = await prisma.titleComponent.findFirstOrThrow({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findFirstOrThrow<T extends ComponentFindFirstOrThrowArgs>(args?: SelectSubset<T, ComponentFindFirstOrThrowArgs<ExtArgs>>): Prisma__ComponentClient<$Result.GetResult<Prisma.$ComponentPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    findFirstOrThrow<T extends TitleComponentFindFirstOrThrowArgs>(args?: SelectSubset<T, TitleComponentFindFirstOrThrowArgs<ExtArgs>>): Prisma__TitleComponentClient<$Result.GetResult<Prisma.$TitleComponentPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find zero or more Components that matches the filter.
+     * Find zero or more TitleComponents that matches the filter.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {ComponentFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @param {TitleComponentFindManyArgs} args - Arguments to filter and select certain fields only.
      * @example
-     * // Get all Components
-     * const components = await prisma.component.findMany()
+     * // Get all TitleComponents
+     * const titleComponents = await prisma.titleComponent.findMany()
      * 
-     * // Get first 10 Components
-     * const components = await prisma.component.findMany({ take: 10 })
+     * // Get first 10 TitleComponents
+     * const titleComponents = await prisma.titleComponent.findMany({ take: 10 })
      * 
      * // Only select the `id`
-     * const componentWithIdOnly = await prisma.component.findMany({ select: { id: true } })
+     * const titleComponentWithIdOnly = await prisma.titleComponent.findMany({ select: { id: true } })
      * 
      */
-    findMany<T extends ComponentFindManyArgs>(args?: SelectSubset<T, ComponentFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ComponentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+    findMany<T extends TitleComponentFindManyArgs>(args?: SelectSubset<T, TitleComponentFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TitleComponentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
     /**
-     * Create a Component.
-     * @param {ComponentCreateArgs} args - Arguments to create a Component.
+     * Create a TitleComponent.
+     * @param {TitleComponentCreateArgs} args - Arguments to create a TitleComponent.
      * @example
-     * // Create one Component
-     * const Component = await prisma.component.create({
+     * // Create one TitleComponent
+     * const TitleComponent = await prisma.titleComponent.create({
      *   data: {
-     *     // ... data to create a Component
+     *     // ... data to create a TitleComponent
      *   }
      * })
      * 
      */
-    create<T extends ComponentCreateArgs>(args: SelectSubset<T, ComponentCreateArgs<ExtArgs>>): Prisma__ComponentClient<$Result.GetResult<Prisma.$ComponentPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    create<T extends TitleComponentCreateArgs>(args: SelectSubset<T, TitleComponentCreateArgs<ExtArgs>>): Prisma__TitleComponentClient<$Result.GetResult<Prisma.$TitleComponentPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Create many Components.
-     * @param {ComponentCreateManyArgs} args - Arguments to create many Components.
+     * Create many TitleComponents.
+     * @param {TitleComponentCreateManyArgs} args - Arguments to create many TitleComponents.
      * @example
-     * // Create many Components
-     * const component = await prisma.component.createMany({
+     * // Create many TitleComponents
+     * const titleComponent = await prisma.titleComponent.createMany({
      *   data: [
      *     // ... provide data here
      *   ]
      * })
      *     
      */
-    createMany<T extends ComponentCreateManyArgs>(args?: SelectSubset<T, ComponentCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+    createMany<T extends TitleComponentCreateManyArgs>(args?: SelectSubset<T, TitleComponentCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
-     * Create many Components and returns the data saved in the database.
-     * @param {ComponentCreateManyAndReturnArgs} args - Arguments to create many Components.
+     * Create many TitleComponents and returns the data saved in the database.
+     * @param {TitleComponentCreateManyAndReturnArgs} args - Arguments to create many TitleComponents.
      * @example
-     * // Create many Components
-     * const component = await prisma.component.createManyAndReturn({
+     * // Create many TitleComponents
+     * const titleComponent = await prisma.titleComponent.createManyAndReturn({
      *   data: [
      *     // ... provide data here
      *   ]
      * })
      * 
-     * // Create many Components and only return the `id`
-     * const componentWithIdOnly = await prisma.component.createManyAndReturn({
+     * // Create many TitleComponents and only return the `id`
+     * const titleComponentWithIdOnly = await prisma.titleComponent.createManyAndReturn({
      *   select: { id: true },
      *   data: [
      *     // ... provide data here
@@ -1254,28 +1262,28 @@ export namespace Prisma {
      * Read more here: https://pris.ly/d/null-undefined
      * 
      */
-    createManyAndReturn<T extends ComponentCreateManyAndReturnArgs>(args?: SelectSubset<T, ComponentCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ComponentPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+    createManyAndReturn<T extends TitleComponentCreateManyAndReturnArgs>(args?: SelectSubset<T, TitleComponentCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TitleComponentPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
     /**
-     * Delete a Component.
-     * @param {ComponentDeleteArgs} args - Arguments to delete one Component.
+     * Delete a TitleComponent.
+     * @param {TitleComponentDeleteArgs} args - Arguments to delete one TitleComponent.
      * @example
-     * // Delete one Component
-     * const Component = await prisma.component.delete({
+     * // Delete one TitleComponent
+     * const TitleComponent = await prisma.titleComponent.delete({
      *   where: {
-     *     // ... filter to delete one Component
+     *     // ... filter to delete one TitleComponent
      *   }
      * })
      * 
      */
-    delete<T extends ComponentDeleteArgs>(args: SelectSubset<T, ComponentDeleteArgs<ExtArgs>>): Prisma__ComponentClient<$Result.GetResult<Prisma.$ComponentPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    delete<T extends TitleComponentDeleteArgs>(args: SelectSubset<T, TitleComponentDeleteArgs<ExtArgs>>): Prisma__TitleComponentClient<$Result.GetResult<Prisma.$TitleComponentPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Update one Component.
-     * @param {ComponentUpdateArgs} args - Arguments to update one Component.
+     * Update one TitleComponent.
+     * @param {TitleComponentUpdateArgs} args - Arguments to update one TitleComponent.
      * @example
-     * // Update one Component
-     * const component = await prisma.component.update({
+     * // Update one TitleComponent
+     * const titleComponent = await prisma.titleComponent.update({
      *   where: {
      *     // ... provide filter here
      *   },
@@ -1285,30 +1293,30 @@ export namespace Prisma {
      * })
      * 
      */
-    update<T extends ComponentUpdateArgs>(args: SelectSubset<T, ComponentUpdateArgs<ExtArgs>>): Prisma__ComponentClient<$Result.GetResult<Prisma.$ComponentPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    update<T extends TitleComponentUpdateArgs>(args: SelectSubset<T, TitleComponentUpdateArgs<ExtArgs>>): Prisma__TitleComponentClient<$Result.GetResult<Prisma.$TitleComponentPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Delete zero or more Components.
-     * @param {ComponentDeleteManyArgs} args - Arguments to filter Components to delete.
+     * Delete zero or more TitleComponents.
+     * @param {TitleComponentDeleteManyArgs} args - Arguments to filter TitleComponents to delete.
      * @example
-     * // Delete a few Components
-     * const { count } = await prisma.component.deleteMany({
+     * // Delete a few TitleComponents
+     * const { count } = await prisma.titleComponent.deleteMany({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      * 
      */
-    deleteMany<T extends ComponentDeleteManyArgs>(args?: SelectSubset<T, ComponentDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+    deleteMany<T extends TitleComponentDeleteManyArgs>(args?: SelectSubset<T, TitleComponentDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
-     * Update zero or more Components.
+     * Update zero or more TitleComponents.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {ComponentUpdateManyArgs} args - Arguments to update one or more rows.
+     * @param {TitleComponentUpdateManyArgs} args - Arguments to update one or more rows.
      * @example
-     * // Update many Components
-     * const component = await prisma.component.updateMany({
+     * // Update many TitleComponents
+     * const titleComponent = await prisma.titleComponent.updateMany({
      *   where: {
      *     // ... provide filter here
      *   },
@@ -1318,14 +1326,14 @@ export namespace Prisma {
      * })
      * 
      */
-    updateMany<T extends ComponentUpdateManyArgs>(args: SelectSubset<T, ComponentUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+    updateMany<T extends TitleComponentUpdateManyArgs>(args: SelectSubset<T, TitleComponentUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
-     * Update zero or more Components and returns the data updated in the database.
-     * @param {ComponentUpdateManyAndReturnArgs} args - Arguments to update many Components.
+     * Update zero or more TitleComponents and returns the data updated in the database.
+     * @param {TitleComponentUpdateManyAndReturnArgs} args - Arguments to update many TitleComponents.
      * @example
-     * // Update many Components
-     * const component = await prisma.component.updateManyAndReturn({
+     * // Update many TitleComponents
+     * const titleComponent = await prisma.titleComponent.updateManyAndReturn({
      *   where: {
      *     // ... provide filter here
      *   },
@@ -1334,8 +1342,8 @@ export namespace Prisma {
      *   ]
      * })
      * 
-     * // Update zero or more Components and only return the `id`
-     * const componentWithIdOnly = await prisma.component.updateManyAndReturn({
+     * // Update zero or more TitleComponents and only return the `id`
+     * const titleComponentWithIdOnly = await prisma.titleComponent.updateManyAndReturn({
      *   select: { id: true },
      *   where: {
      *     // ... provide filter here
@@ -1348,56 +1356,56 @@ export namespace Prisma {
      * Read more here: https://pris.ly/d/null-undefined
      * 
      */
-    updateManyAndReturn<T extends ComponentUpdateManyAndReturnArgs>(args: SelectSubset<T, ComponentUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ComponentPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+    updateManyAndReturn<T extends TitleComponentUpdateManyAndReturnArgs>(args: SelectSubset<T, TitleComponentUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TitleComponentPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
     /**
-     * Create or update one Component.
-     * @param {ComponentUpsertArgs} args - Arguments to update or create a Component.
+     * Create or update one TitleComponent.
+     * @param {TitleComponentUpsertArgs} args - Arguments to update or create a TitleComponent.
      * @example
-     * // Update or create a Component
-     * const component = await prisma.component.upsert({
+     * // Update or create a TitleComponent
+     * const titleComponent = await prisma.titleComponent.upsert({
      *   create: {
-     *     // ... data to create a Component
+     *     // ... data to create a TitleComponent
      *   },
      *   update: {
      *     // ... in case it already exists, update
      *   },
      *   where: {
-     *     // ... the filter for the Component we want to update
+     *     // ... the filter for the TitleComponent we want to update
      *   }
      * })
      */
-    upsert<T extends ComponentUpsertArgs>(args: SelectSubset<T, ComponentUpsertArgs<ExtArgs>>): Prisma__ComponentClient<$Result.GetResult<Prisma.$ComponentPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    upsert<T extends TitleComponentUpsertArgs>(args: SelectSubset<T, TitleComponentUpsertArgs<ExtArgs>>): Prisma__TitleComponentClient<$Result.GetResult<Prisma.$TitleComponentPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
 
     /**
-     * Count the number of Components.
+     * Count the number of TitleComponents.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {ComponentCountArgs} args - Arguments to filter Components to count.
+     * @param {TitleComponentCountArgs} args - Arguments to filter TitleComponents to count.
      * @example
-     * // Count the number of Components
-     * const count = await prisma.component.count({
+     * // Count the number of TitleComponents
+     * const count = await prisma.titleComponent.count({
      *   where: {
-     *     // ... the filter for the Components we want to count
+     *     // ... the filter for the TitleComponents we want to count
      *   }
      * })
     **/
-    count<T extends ComponentCountArgs>(
-      args?: Subset<T, ComponentCountArgs>,
+    count<T extends TitleComponentCountArgs>(
+      args?: Subset<T, TitleComponentCountArgs>,
     ): Prisma.PrismaPromise<
       T extends $Utils.Record<'select', any>
         ? T['select'] extends true
           ? number
-          : GetScalarType<T['select'], ComponentCountAggregateOutputType>
+          : GetScalarType<T['select'], TitleComponentCountAggregateOutputType>
         : number
     >
 
     /**
-     * Allows you to perform aggregations operations on a Component.
+     * Allows you to perform aggregations operations on a TitleComponent.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {ComponentAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @param {TitleComponentAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
      * @example
      * // Ordered by age ascending
      * // Where email contains prisma.io
@@ -1417,13 +1425,13 @@ export namespace Prisma {
      *   take: 10,
      * })
     **/
-    aggregate<T extends ComponentAggregateArgs>(args: Subset<T, ComponentAggregateArgs>): Prisma.PrismaPromise<GetComponentAggregateType<T>>
+    aggregate<T extends TitleComponentAggregateArgs>(args: Subset<T, TitleComponentAggregateArgs>): Prisma.PrismaPromise<GetTitleComponentAggregateType<T>>
 
     /**
-     * Group by Component.
+     * Group by TitleComponent.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {ComponentGroupByArgs} args - Group by arguments.
+     * @param {TitleComponentGroupByArgs} args - Group by arguments.
      * @example
      * // Group by city, order by createdAt, get count
      * const result = await prisma.user.groupBy({
@@ -1438,14 +1446,14 @@ export namespace Prisma {
      * 
     **/
     groupBy<
-      T extends ComponentGroupByArgs,
+      T extends TitleComponentGroupByArgs,
       HasSelectOrTake extends Or<
         Extends<'skip', Keys<T>>,
         Extends<'take', Keys<T>>
       >,
       OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: ComponentGroupByArgs['orderBy'] }
-        : { orderBy?: ComponentGroupByArgs['orderBy'] },
+        ? { orderBy: TitleComponentGroupByArgs['orderBy'] }
+        : { orderBy?: TitleComponentGroupByArgs['orderBy'] },
       OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
       ByFields extends MaybeTupleToUnion<T['by']>,
       ByValid extends Has<ByFields, OrderFields>,
@@ -1494,20 +1502,20 @@ export namespace Prisma {
             ? never
             : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
         }[OrderFields]
-    >(args: SubsetIntersection<T, ComponentGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetComponentGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+    >(args: SubsetIntersection<T, TitleComponentGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTitleComponentGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
   /**
-   * Fields of the Component model
+   * Fields of the TitleComponent model
    */
-  readonly fields: ComponentFieldRefs;
+  readonly fields: TitleComponentFieldRefs;
   }
 
   /**
-   * The delegate class that acts as a "Promise-like" for Component.
+   * The delegate class that acts as a "Promise-like" for TitleComponent.
    * Why is this prefixed with `Prisma__`?
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__ComponentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+  export interface Prisma__TitleComponentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1535,379 +1543,379 @@ export namespace Prisma {
 
 
   /**
-   * Fields of the Component model
+   * Fields of the TitleComponent model
    */
-  interface ComponentFieldRefs {
-    readonly id: FieldRef<"Component", 'String'>
-    readonly name: FieldRef<"Component", 'String'>
-    readonly sourceCode: FieldRef<"Component", 'String'>
-    readonly props: FieldRef<"Component", 'Json'>
-    readonly schemaVer: FieldRef<"Component", 'Int'>
-    readonly createdAt: FieldRef<"Component", 'DateTime'>
-    readonly updatedAt: FieldRef<"Component", 'DateTime'>
+  interface TitleComponentFieldRefs {
+    readonly id: FieldRef<"TitleComponent", 'String'>
+    readonly text: FieldRef<"TitleComponent", 'String'>
+    readonly color: FieldRef<"TitleComponent", 'String'>
+    readonly size: FieldRef<"TitleComponent", 'Int'>
+    readonly weight: FieldRef<"TitleComponent", 'Int'>
+    readonly updatedAt: FieldRef<"TitleComponent", 'DateTime'>
+    readonly createdAt: FieldRef<"TitleComponent", 'DateTime'>
   }
     
 
   // Custom InputTypes
   /**
-   * Component findUnique
+   * TitleComponent findUnique
    */
-  export type ComponentFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type TitleComponentFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Component
+     * Select specific fields to fetch from the TitleComponent
      */
-    select?: ComponentSelect<ExtArgs> | null
+    select?: TitleComponentSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Component
+     * Omit specific fields from the TitleComponent
      */
-    omit?: ComponentOmit<ExtArgs> | null
+    omit?: TitleComponentOmit<ExtArgs> | null
     /**
-     * Filter, which Component to fetch.
+     * Filter, which TitleComponent to fetch.
      */
-    where: ComponentWhereUniqueInput
+    where: TitleComponentWhereUniqueInput
   }
 
   /**
-   * Component findUniqueOrThrow
+   * TitleComponent findUniqueOrThrow
    */
-  export type ComponentFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type TitleComponentFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Component
+     * Select specific fields to fetch from the TitleComponent
      */
-    select?: ComponentSelect<ExtArgs> | null
+    select?: TitleComponentSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Component
+     * Omit specific fields from the TitleComponent
      */
-    omit?: ComponentOmit<ExtArgs> | null
+    omit?: TitleComponentOmit<ExtArgs> | null
     /**
-     * Filter, which Component to fetch.
+     * Filter, which TitleComponent to fetch.
      */
-    where: ComponentWhereUniqueInput
+    where: TitleComponentWhereUniqueInput
   }
 
   /**
-   * Component findFirst
+   * TitleComponent findFirst
    */
-  export type ComponentFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type TitleComponentFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Component
+     * Select specific fields to fetch from the TitleComponent
      */
-    select?: ComponentSelect<ExtArgs> | null
+    select?: TitleComponentSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Component
+     * Omit specific fields from the TitleComponent
      */
-    omit?: ComponentOmit<ExtArgs> | null
+    omit?: TitleComponentOmit<ExtArgs> | null
     /**
-     * Filter, which Component to fetch.
+     * Filter, which TitleComponent to fetch.
      */
-    where?: ComponentWhereInput
+    where?: TitleComponentWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of Components to fetch.
+     * Determine the order of TitleComponents to fetch.
      */
-    orderBy?: ComponentOrderByWithRelationInput | ComponentOrderByWithRelationInput[]
+    orderBy?: TitleComponentOrderByWithRelationInput | TitleComponentOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for searching for Components.
+     * Sets the position for searching for TitleComponents.
      */
-    cursor?: ComponentWhereUniqueInput
+    cursor?: TitleComponentWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` Components from the position of the cursor.
+     * Take `±n` TitleComponents from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` Components.
+     * Skip the first `n` TitleComponents.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
-     * Filter by unique combinations of Components.
+     * Filter by unique combinations of TitleComponents.
      */
-    distinct?: ComponentScalarFieldEnum | ComponentScalarFieldEnum[]
+    distinct?: TitleComponentScalarFieldEnum | TitleComponentScalarFieldEnum[]
   }
 
   /**
-   * Component findFirstOrThrow
+   * TitleComponent findFirstOrThrow
    */
-  export type ComponentFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type TitleComponentFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Component
+     * Select specific fields to fetch from the TitleComponent
      */
-    select?: ComponentSelect<ExtArgs> | null
+    select?: TitleComponentSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Component
+     * Omit specific fields from the TitleComponent
      */
-    omit?: ComponentOmit<ExtArgs> | null
+    omit?: TitleComponentOmit<ExtArgs> | null
     /**
-     * Filter, which Component to fetch.
+     * Filter, which TitleComponent to fetch.
      */
-    where?: ComponentWhereInput
+    where?: TitleComponentWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of Components to fetch.
+     * Determine the order of TitleComponents to fetch.
      */
-    orderBy?: ComponentOrderByWithRelationInput | ComponentOrderByWithRelationInput[]
+    orderBy?: TitleComponentOrderByWithRelationInput | TitleComponentOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for searching for Components.
+     * Sets the position for searching for TitleComponents.
      */
-    cursor?: ComponentWhereUniqueInput
+    cursor?: TitleComponentWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` Components from the position of the cursor.
+     * Take `±n` TitleComponents from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` Components.
+     * Skip the first `n` TitleComponents.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
-     * Filter by unique combinations of Components.
+     * Filter by unique combinations of TitleComponents.
      */
-    distinct?: ComponentScalarFieldEnum | ComponentScalarFieldEnum[]
+    distinct?: TitleComponentScalarFieldEnum | TitleComponentScalarFieldEnum[]
   }
 
   /**
-   * Component findMany
+   * TitleComponent findMany
    */
-  export type ComponentFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type TitleComponentFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Component
+     * Select specific fields to fetch from the TitleComponent
      */
-    select?: ComponentSelect<ExtArgs> | null
+    select?: TitleComponentSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Component
+     * Omit specific fields from the TitleComponent
      */
-    omit?: ComponentOmit<ExtArgs> | null
+    omit?: TitleComponentOmit<ExtArgs> | null
     /**
-     * Filter, which Components to fetch.
+     * Filter, which TitleComponents to fetch.
      */
-    where?: ComponentWhereInput
+    where?: TitleComponentWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of Components to fetch.
+     * Determine the order of TitleComponents to fetch.
      */
-    orderBy?: ComponentOrderByWithRelationInput | ComponentOrderByWithRelationInput[]
+    orderBy?: TitleComponentOrderByWithRelationInput | TitleComponentOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for listing Components.
+     * Sets the position for listing TitleComponents.
      */
-    cursor?: ComponentWhereUniqueInput
+    cursor?: TitleComponentWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` Components from the position of the cursor.
+     * Take `±n` TitleComponents from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` Components.
+     * Skip the first `n` TitleComponents.
      */
     skip?: number
-    distinct?: ComponentScalarFieldEnum | ComponentScalarFieldEnum[]
+    distinct?: TitleComponentScalarFieldEnum | TitleComponentScalarFieldEnum[]
   }
 
   /**
-   * Component create
+   * TitleComponent create
    */
-  export type ComponentCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type TitleComponentCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Component
+     * Select specific fields to fetch from the TitleComponent
      */
-    select?: ComponentSelect<ExtArgs> | null
+    select?: TitleComponentSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Component
+     * Omit specific fields from the TitleComponent
      */
-    omit?: ComponentOmit<ExtArgs> | null
+    omit?: TitleComponentOmit<ExtArgs> | null
     /**
-     * The data needed to create a Component.
+     * The data needed to create a TitleComponent.
      */
-    data: XOR<ComponentCreateInput, ComponentUncheckedCreateInput>
+    data: XOR<TitleComponentCreateInput, TitleComponentUncheckedCreateInput>
   }
 
   /**
-   * Component createMany
+   * TitleComponent createMany
    */
-  export type ComponentCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type TitleComponentCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * The data used to create many Components.
+     * The data used to create many TitleComponents.
      */
-    data: ComponentCreateManyInput | ComponentCreateManyInput[]
+    data: TitleComponentCreateManyInput | TitleComponentCreateManyInput[]
     skipDuplicates?: boolean
   }
 
   /**
-   * Component createManyAndReturn
+   * TitleComponent createManyAndReturn
    */
-  export type ComponentCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type TitleComponentCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Component
+     * Select specific fields to fetch from the TitleComponent
      */
-    select?: ComponentSelectCreateManyAndReturn<ExtArgs> | null
+    select?: TitleComponentSelectCreateManyAndReturn<ExtArgs> | null
     /**
-     * Omit specific fields from the Component
+     * Omit specific fields from the TitleComponent
      */
-    omit?: ComponentOmit<ExtArgs> | null
+    omit?: TitleComponentOmit<ExtArgs> | null
     /**
-     * The data used to create many Components.
+     * The data used to create many TitleComponents.
      */
-    data: ComponentCreateManyInput | ComponentCreateManyInput[]
+    data: TitleComponentCreateManyInput | TitleComponentCreateManyInput[]
     skipDuplicates?: boolean
   }
 
   /**
-   * Component update
+   * TitleComponent update
    */
-  export type ComponentUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type TitleComponentUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Component
+     * Select specific fields to fetch from the TitleComponent
      */
-    select?: ComponentSelect<ExtArgs> | null
+    select?: TitleComponentSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Component
+     * Omit specific fields from the TitleComponent
      */
-    omit?: ComponentOmit<ExtArgs> | null
+    omit?: TitleComponentOmit<ExtArgs> | null
     /**
-     * The data needed to update a Component.
+     * The data needed to update a TitleComponent.
      */
-    data: XOR<ComponentUpdateInput, ComponentUncheckedUpdateInput>
+    data: XOR<TitleComponentUpdateInput, TitleComponentUncheckedUpdateInput>
     /**
-     * Choose, which Component to update.
+     * Choose, which TitleComponent to update.
      */
-    where: ComponentWhereUniqueInput
+    where: TitleComponentWhereUniqueInput
   }
 
   /**
-   * Component updateMany
+   * TitleComponent updateMany
    */
-  export type ComponentUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type TitleComponentUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * The data used to update Components.
+     * The data used to update TitleComponents.
      */
-    data: XOR<ComponentUpdateManyMutationInput, ComponentUncheckedUpdateManyInput>
+    data: XOR<TitleComponentUpdateManyMutationInput, TitleComponentUncheckedUpdateManyInput>
     /**
-     * Filter which Components to update
+     * Filter which TitleComponents to update
      */
-    where?: ComponentWhereInput
+    where?: TitleComponentWhereInput
     /**
-     * Limit how many Components to update.
+     * Limit how many TitleComponents to update.
      */
     limit?: number
   }
 
   /**
-   * Component updateManyAndReturn
+   * TitleComponent updateManyAndReturn
    */
-  export type ComponentUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type TitleComponentUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Component
+     * Select specific fields to fetch from the TitleComponent
      */
-    select?: ComponentSelectUpdateManyAndReturn<ExtArgs> | null
+    select?: TitleComponentSelectUpdateManyAndReturn<ExtArgs> | null
     /**
-     * Omit specific fields from the Component
+     * Omit specific fields from the TitleComponent
      */
-    omit?: ComponentOmit<ExtArgs> | null
+    omit?: TitleComponentOmit<ExtArgs> | null
     /**
-     * The data used to update Components.
+     * The data used to update TitleComponents.
      */
-    data: XOR<ComponentUpdateManyMutationInput, ComponentUncheckedUpdateManyInput>
+    data: XOR<TitleComponentUpdateManyMutationInput, TitleComponentUncheckedUpdateManyInput>
     /**
-     * Filter which Components to update
+     * Filter which TitleComponents to update
      */
-    where?: ComponentWhereInput
+    where?: TitleComponentWhereInput
     /**
-     * Limit how many Components to update.
+     * Limit how many TitleComponents to update.
      */
     limit?: number
   }
 
   /**
-   * Component upsert
+   * TitleComponent upsert
    */
-  export type ComponentUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type TitleComponentUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Component
+     * Select specific fields to fetch from the TitleComponent
      */
-    select?: ComponentSelect<ExtArgs> | null
+    select?: TitleComponentSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Component
+     * Omit specific fields from the TitleComponent
      */
-    omit?: ComponentOmit<ExtArgs> | null
+    omit?: TitleComponentOmit<ExtArgs> | null
     /**
-     * The filter to search for the Component to update in case it exists.
+     * The filter to search for the TitleComponent to update in case it exists.
      */
-    where: ComponentWhereUniqueInput
+    where: TitleComponentWhereUniqueInput
     /**
-     * In case the Component found by the `where` argument doesn't exist, create a new Component with this data.
+     * In case the TitleComponent found by the `where` argument doesn't exist, create a new TitleComponent with this data.
      */
-    create: XOR<ComponentCreateInput, ComponentUncheckedCreateInput>
+    create: XOR<TitleComponentCreateInput, TitleComponentUncheckedCreateInput>
     /**
-     * In case the Component was found with the provided `where` argument, update it with this data.
+     * In case the TitleComponent was found with the provided `where` argument, update it with this data.
      */
-    update: XOR<ComponentUpdateInput, ComponentUncheckedUpdateInput>
+    update: XOR<TitleComponentUpdateInput, TitleComponentUncheckedUpdateInput>
   }
 
   /**
-   * Component delete
+   * TitleComponent delete
    */
-  export type ComponentDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type TitleComponentDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Component
+     * Select specific fields to fetch from the TitleComponent
      */
-    select?: ComponentSelect<ExtArgs> | null
+    select?: TitleComponentSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Component
+     * Omit specific fields from the TitleComponent
      */
-    omit?: ComponentOmit<ExtArgs> | null
+    omit?: TitleComponentOmit<ExtArgs> | null
     /**
-     * Filter which Component to delete.
+     * Filter which TitleComponent to delete.
      */
-    where: ComponentWhereUniqueInput
+    where: TitleComponentWhereUniqueInput
   }
 
   /**
-   * Component deleteMany
+   * TitleComponent deleteMany
    */
-  export type ComponentDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type TitleComponentDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Filter which Components to delete
+     * Filter which TitleComponents to delete
      */
-    where?: ComponentWhereInput
+    where?: TitleComponentWhereInput
     /**
-     * Limit how many Components to delete.
+     * Limit how many TitleComponents to delete.
      */
     limit?: number
   }
 
   /**
-   * Component without action
+   * TitleComponent without action
    */
-  export type ComponentDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type TitleComponentDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Component
+     * Select specific fields to fetch from the TitleComponent
      */
-    select?: ComponentSelect<ExtArgs> | null
+    select?: TitleComponentSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Component
+     * Omit specific fields from the TitleComponent
      */
-    omit?: ComponentOmit<ExtArgs> | null
+    omit?: TitleComponentOmit<ExtArgs> | null
   }
 
 
@@ -1925,17 +1933,17 @@ export namespace Prisma {
   export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
-  export const ComponentScalarFieldEnum: {
+  export const TitleComponentScalarFieldEnum: {
     id: 'id',
-    name: 'name',
-    sourceCode: 'sourceCode',
-    props: 'props',
-    schemaVer: 'schemaVer',
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    text: 'text',
+    color: 'color',
+    size: 'size',
+    weight: 'weight',
+    updatedAt: 'updatedAt',
+    createdAt: 'createdAt'
   };
 
-  export type ComponentScalarFieldEnum = (typeof ComponentScalarFieldEnum)[keyof typeof ComponentScalarFieldEnum]
+  export type TitleComponentScalarFieldEnum = (typeof TitleComponentScalarFieldEnum)[keyof typeof TitleComponentScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -1946,28 +1954,12 @@ export namespace Prisma {
   export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
-  export const JsonNullValueInput: {
-    JsonNull: typeof JsonNull
-  };
-
-  export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
-
-
   export const QueryMode: {
     default: 'default',
     insensitive: 'insensitive'
   };
 
   export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
-
-
-  export const JsonNullValueFilter: {
-    DbNull: typeof DbNull,
-    JsonNull: typeof JsonNull,
-    AnyNull: typeof AnyNull
-  };
-
-  export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
   /**
@@ -1986,20 +1978,6 @@ export namespace Prisma {
    * Reference to a field of type 'String[]'
    */
   export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'Json'
-   */
-  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
-    
-
-
-  /**
-   * Reference to a field of type 'QueryMode'
-   */
-  export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
 
 
@@ -2048,138 +2026,138 @@ export namespace Prisma {
    */
 
 
-  export type ComponentWhereInput = {
-    AND?: ComponentWhereInput | ComponentWhereInput[]
-    OR?: ComponentWhereInput[]
-    NOT?: ComponentWhereInput | ComponentWhereInput[]
-    id?: StringFilter<"Component"> | string
-    name?: StringFilter<"Component"> | string
-    sourceCode?: StringFilter<"Component"> | string
-    props?: JsonFilter<"Component">
-    schemaVer?: IntFilter<"Component"> | number
-    createdAt?: DateTimeFilter<"Component"> | Date | string
-    updatedAt?: DateTimeFilter<"Component"> | Date | string
+  export type TitleComponentWhereInput = {
+    AND?: TitleComponentWhereInput | TitleComponentWhereInput[]
+    OR?: TitleComponentWhereInput[]
+    NOT?: TitleComponentWhereInput | TitleComponentWhereInput[]
+    id?: StringFilter<"TitleComponent"> | string
+    text?: StringFilter<"TitleComponent"> | string
+    color?: StringFilter<"TitleComponent"> | string
+    size?: IntFilter<"TitleComponent"> | number
+    weight?: IntFilter<"TitleComponent"> | number
+    updatedAt?: DateTimeFilter<"TitleComponent"> | Date | string
+    createdAt?: DateTimeFilter<"TitleComponent"> | Date | string
   }
 
-  export type ComponentOrderByWithRelationInput = {
+  export type TitleComponentOrderByWithRelationInput = {
     id?: SortOrder
-    name?: SortOrder
-    sourceCode?: SortOrder
-    props?: SortOrder
-    schemaVer?: SortOrder
-    createdAt?: SortOrder
+    text?: SortOrder
+    color?: SortOrder
+    size?: SortOrder
+    weight?: SortOrder
     updatedAt?: SortOrder
+    createdAt?: SortOrder
   }
 
-  export type ComponentWhereUniqueInput = Prisma.AtLeast<{
+  export type TitleComponentWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    AND?: ComponentWhereInput | ComponentWhereInput[]
-    OR?: ComponentWhereInput[]
-    NOT?: ComponentWhereInput | ComponentWhereInput[]
-    name?: StringFilter<"Component"> | string
-    sourceCode?: StringFilter<"Component"> | string
-    props?: JsonFilter<"Component">
-    schemaVer?: IntFilter<"Component"> | number
-    createdAt?: DateTimeFilter<"Component"> | Date | string
-    updatedAt?: DateTimeFilter<"Component"> | Date | string
+    AND?: TitleComponentWhereInput | TitleComponentWhereInput[]
+    OR?: TitleComponentWhereInput[]
+    NOT?: TitleComponentWhereInput | TitleComponentWhereInput[]
+    text?: StringFilter<"TitleComponent"> | string
+    color?: StringFilter<"TitleComponent"> | string
+    size?: IntFilter<"TitleComponent"> | number
+    weight?: IntFilter<"TitleComponent"> | number
+    updatedAt?: DateTimeFilter<"TitleComponent"> | Date | string
+    createdAt?: DateTimeFilter<"TitleComponent"> | Date | string
   }, "id">
 
-  export type ComponentOrderByWithAggregationInput = {
+  export type TitleComponentOrderByWithAggregationInput = {
     id?: SortOrder
-    name?: SortOrder
-    sourceCode?: SortOrder
-    props?: SortOrder
-    schemaVer?: SortOrder
-    createdAt?: SortOrder
+    text?: SortOrder
+    color?: SortOrder
+    size?: SortOrder
+    weight?: SortOrder
     updatedAt?: SortOrder
-    _count?: ComponentCountOrderByAggregateInput
-    _avg?: ComponentAvgOrderByAggregateInput
-    _max?: ComponentMaxOrderByAggregateInput
-    _min?: ComponentMinOrderByAggregateInput
-    _sum?: ComponentSumOrderByAggregateInput
+    createdAt?: SortOrder
+    _count?: TitleComponentCountOrderByAggregateInput
+    _avg?: TitleComponentAvgOrderByAggregateInput
+    _max?: TitleComponentMaxOrderByAggregateInput
+    _min?: TitleComponentMinOrderByAggregateInput
+    _sum?: TitleComponentSumOrderByAggregateInput
   }
 
-  export type ComponentScalarWhereWithAggregatesInput = {
-    AND?: ComponentScalarWhereWithAggregatesInput | ComponentScalarWhereWithAggregatesInput[]
-    OR?: ComponentScalarWhereWithAggregatesInput[]
-    NOT?: ComponentScalarWhereWithAggregatesInput | ComponentScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"Component"> | string
-    name?: StringWithAggregatesFilter<"Component"> | string
-    sourceCode?: StringWithAggregatesFilter<"Component"> | string
-    props?: JsonWithAggregatesFilter<"Component">
-    schemaVer?: IntWithAggregatesFilter<"Component"> | number
-    createdAt?: DateTimeWithAggregatesFilter<"Component"> | Date | string
-    updatedAt?: DateTimeWithAggregatesFilter<"Component"> | Date | string
+  export type TitleComponentScalarWhereWithAggregatesInput = {
+    AND?: TitleComponentScalarWhereWithAggregatesInput | TitleComponentScalarWhereWithAggregatesInput[]
+    OR?: TitleComponentScalarWhereWithAggregatesInput[]
+    NOT?: TitleComponentScalarWhereWithAggregatesInput | TitleComponentScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"TitleComponent"> | string
+    text?: StringWithAggregatesFilter<"TitleComponent"> | string
+    color?: StringWithAggregatesFilter<"TitleComponent"> | string
+    size?: IntWithAggregatesFilter<"TitleComponent"> | number
+    weight?: IntWithAggregatesFilter<"TitleComponent"> | number
+    updatedAt?: DateTimeWithAggregatesFilter<"TitleComponent"> | Date | string
+    createdAt?: DateTimeWithAggregatesFilter<"TitleComponent"> | Date | string
   }
 
-  export type ComponentCreateInput = {
+  export type TitleComponentCreateInput = {
     id?: string
-    name?: string
-    sourceCode: string
-    props?: JsonNullValueInput | InputJsonValue
-    schemaVer?: number
-    createdAt?: Date | string
+    text: string
+    color: string
+    size: number
+    weight: number
     updatedAt?: Date | string
+    createdAt?: Date | string
   }
 
-  export type ComponentUncheckedCreateInput = {
+  export type TitleComponentUncheckedCreateInput = {
     id?: string
-    name?: string
-    sourceCode: string
-    props?: JsonNullValueInput | InputJsonValue
-    schemaVer?: number
-    createdAt?: Date | string
+    text: string
+    color: string
+    size: number
+    weight: number
     updatedAt?: Date | string
+    createdAt?: Date | string
   }
 
-  export type ComponentUpdateInput = {
+  export type TitleComponentUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    sourceCode?: StringFieldUpdateOperationsInput | string
-    props?: JsonNullValueInput | InputJsonValue
-    schemaVer?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    text?: StringFieldUpdateOperationsInput | string
+    color?: StringFieldUpdateOperationsInput | string
+    size?: IntFieldUpdateOperationsInput | number
+    weight?: IntFieldUpdateOperationsInput | number
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type ComponentUncheckedUpdateInput = {
+  export type TitleComponentUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    sourceCode?: StringFieldUpdateOperationsInput | string
-    props?: JsonNullValueInput | InputJsonValue
-    schemaVer?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    text?: StringFieldUpdateOperationsInput | string
+    color?: StringFieldUpdateOperationsInput | string
+    size?: IntFieldUpdateOperationsInput | number
+    weight?: IntFieldUpdateOperationsInput | number
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type ComponentCreateManyInput = {
+  export type TitleComponentCreateManyInput = {
     id?: string
-    name?: string
-    sourceCode: string
-    props?: JsonNullValueInput | InputJsonValue
-    schemaVer?: number
-    createdAt?: Date | string
+    text: string
+    color: string
+    size: number
+    weight: number
     updatedAt?: Date | string
+    createdAt?: Date | string
   }
 
-  export type ComponentUpdateManyMutationInput = {
+  export type TitleComponentUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    sourceCode?: StringFieldUpdateOperationsInput | string
-    props?: JsonNullValueInput | InputJsonValue
-    schemaVer?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    text?: StringFieldUpdateOperationsInput | string
+    color?: StringFieldUpdateOperationsInput | string
+    size?: IntFieldUpdateOperationsInput | number
+    weight?: IntFieldUpdateOperationsInput | number
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type ComponentUncheckedUpdateManyInput = {
+  export type TitleComponentUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    sourceCode?: StringFieldUpdateOperationsInput | string
-    props?: JsonNullValueInput | InputJsonValue
-    schemaVer?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    text?: StringFieldUpdateOperationsInput | string
+    color?: StringFieldUpdateOperationsInput | string
+    size?: IntFieldUpdateOperationsInput | number
+    weight?: IntFieldUpdateOperationsInput | number
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -2195,29 +2173,6 @@ export namespace Prisma {
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     mode?: QueryMode
     not?: NestedStringFilter<$PrismaModel> | string
-  }
-  export type JsonFilter<$PrismaModel = never> =
-    | PatchUndefined<
-        Either<Required<JsonFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonFilterBase<$PrismaModel>>, 'path'>>,
-        Required<JsonFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<JsonFilterBase<$PrismaModel>>, 'path'>>
-
-  export type JsonFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    path?: string[]
-    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
-    string_contains?: string | StringFieldRefInput<$PrismaModel>
-    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
-    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
-    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -2242,40 +2197,44 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
-  export type ComponentCountOrderByAggregateInput = {
+  export type TitleComponentCountOrderByAggregateInput = {
     id?: SortOrder
-    name?: SortOrder
-    sourceCode?: SortOrder
-    props?: SortOrder
-    schemaVer?: SortOrder
-    createdAt?: SortOrder
+    text?: SortOrder
+    color?: SortOrder
+    size?: SortOrder
+    weight?: SortOrder
     updatedAt?: SortOrder
+    createdAt?: SortOrder
   }
 
-  export type ComponentAvgOrderByAggregateInput = {
-    schemaVer?: SortOrder
+  export type TitleComponentAvgOrderByAggregateInput = {
+    size?: SortOrder
+    weight?: SortOrder
   }
 
-  export type ComponentMaxOrderByAggregateInput = {
+  export type TitleComponentMaxOrderByAggregateInput = {
     id?: SortOrder
-    name?: SortOrder
-    sourceCode?: SortOrder
-    schemaVer?: SortOrder
-    createdAt?: SortOrder
+    text?: SortOrder
+    color?: SortOrder
+    size?: SortOrder
+    weight?: SortOrder
     updatedAt?: SortOrder
+    createdAt?: SortOrder
   }
 
-  export type ComponentMinOrderByAggregateInput = {
+  export type TitleComponentMinOrderByAggregateInput = {
     id?: SortOrder
-    name?: SortOrder
-    sourceCode?: SortOrder
-    schemaVer?: SortOrder
-    createdAt?: SortOrder
+    text?: SortOrder
+    color?: SortOrder
+    size?: SortOrder
+    weight?: SortOrder
     updatedAt?: SortOrder
+    createdAt?: SortOrder
   }
 
-  export type ComponentSumOrderByAggregateInput = {
-    schemaVer?: SortOrder
+  export type TitleComponentSumOrderByAggregateInput = {
+    size?: SortOrder
+    weight?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -2294,32 +2253,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedStringFilter<$PrismaModel>
     _max?: NestedStringFilter<$PrismaModel>
-  }
-  export type JsonWithAggregatesFilter<$PrismaModel = never> =
-    | PatchUndefined<
-        Either<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
-        Required<JsonWithAggregatesFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
-
-  export type JsonWithAggregatesFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    path?: string[]
-    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
-    string_contains?: string | StringFieldRefInput<$PrismaModel>
-    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
-    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
-    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedJsonFilter<$PrismaModel>
-    _max?: NestedJsonFilter<$PrismaModel>
   }
 
   export type IntWithAggregatesFilter<$PrismaModel = never> = {
@@ -2419,29 +2352,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedStringFilter<$PrismaModel>
     _max?: NestedStringFilter<$PrismaModel>
-  }
-  export type NestedJsonFilter<$PrismaModel = never> =
-    | PatchUndefined<
-        Either<Required<NestedJsonFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>,
-        Required<NestedJsonFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>
-
-  export type NestedJsonFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    path?: string[]
-    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
-    string_contains?: string | StringFieldRefInput<$PrismaModel>
-    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
-    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
-    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {

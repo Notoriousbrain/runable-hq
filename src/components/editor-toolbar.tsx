@@ -25,7 +25,6 @@ export default function HeadingInlineEditor({
   className,
 }: Props) {
   const [editing, setEditing] = useState(false);
-
   const [openColor, setOpenColor] = useState(false);
   const [openSize, setOpenSize] = useState(false);
   const [openWeight, setOpenWeight] = useState(false);
@@ -35,14 +34,10 @@ export default function HeadingInlineEditor({
 
   const hRef = useRef<HTMLHeadingElement | null>(null);
   const popMainRef = useRef<HTMLDivElement | null>(null);
-  // Only use these refs for PopoverAnchor targets (not in the toolbar itself)
-  const colorBadgeAnchorRef = useRef<HTMLSpanElement | null>(null);
-  const sizeBadgeAnchorRef = useRef<HTMLSpanElement | null>(null);
-  const weightBadgeAnchorRef = useRef<HTMLSpanElement | null>(null);
 
   const [localText, setLocalText] = useState(value.title ?? "");
 
-  // ----- Color state (derived) -----
+  // ----- Color state -----
   const initialRGBA = useMemo(
     () => parseColorToRgba(value.color),
     [value.color]
@@ -64,7 +59,7 @@ export default function HeadingInlineEditor({
     if (!editing) setLocalText(value.title ?? "");
   }, [value.title, editing]);
 
-  // Keep color controls synced with prop changes
+  // Sync color changes from props
   useEffect(() => {
     const next = parseColorToRgba(value.color);
     setR(next.r);
@@ -73,7 +68,7 @@ export default function HeadingInlineEditor({
     setA(next.a);
   }, [value.color]);
 
-  // Caret helpers
+  // Move caret to end helper
   function moveCaretToEnd(el: HTMLElement) {
     const range = document.createRange();
     range.selectNodeContents(el);
@@ -83,19 +78,17 @@ export default function HeadingInlineEditor({
     sel?.addRange(range);
   }
 
-  // Focus & caret on enter edit
+  // Focus & caret on edit enter
   useLayoutEffect(() => {
     if (!editing) return;
     const el = hRef.current;
     if (!el) return;
     if (el.innerText !== localText) el.innerText = localText;
     el.focus({ preventScroll: true });
-    requestAnimationFrame(() =>
-      requestAnimationFrame(() => moveCaretToEnd(el))
-    );
+    requestAnimationFrame(() => moveCaretToEnd(el));
   }, [editing, localText]);
 
-  // Click-away to stop editing (but allow clicks inside any subpopover)
+  // Click-away to stop editing
   useEffect(() => {
     if (!editing) return;
     const onDown = (e: MouseEvent) => {
@@ -150,23 +143,22 @@ export default function HeadingInlineEditor({
 
   const currentWeight: TextToken["weight"] = localWeight ?? value.weight;
   function setWeight(w: TextToken["weight"]) {
-    setLocalWeight(w); // immediate visual
+    setLocalWeight(w);
     onChange({ ...value, weight: w });
   }
 
-  // Insert plain text at current caret in a contentEditable node
+  // Insert plain text at caret
   function insertAtCaret(text: string) {
     const sel = window.getSelection();
     if (!sel || sel.rangeCount === 0) return;
     sel.deleteFromDocument();
     sel.getRangeAt(0).insertNode(document.createTextNode(text));
-    // Move caret after inserted text
     sel.collapseToEnd();
   }
 
   return (
     <>
-      {/* Main popover anchored to the heading */}
+      {/* Main popover anchored to heading */}
       <Popover open={editing}>
         <PopoverAnchor asChild>
           <h2
@@ -181,9 +173,9 @@ export default function HeadingInlineEditor({
             role="textbox"
             aria-label="Edit heading"
             onDoubleClick={() => setEditing(true)}
-            onClick={() => {
-              if (editing) hRef.current?.focus({ preventScroll: true });
-            }}
+            onClick={() =>
+              editing && hRef.current?.focus({ preventScroll: true })
+            }
             onPaste={(e) => {
               e.preventDefault();
               const text = e.clipboardData?.getData("text/plain") ?? "";
@@ -219,6 +211,7 @@ export default function HeadingInlineEditor({
           </h2>
         </PopoverAnchor>
 
+        {/* Toolbar inside main popover */}
         {editing && (
           <PopoverContent
             ref={popMainRef}
@@ -232,7 +225,6 @@ export default function HeadingInlineEditor({
             onCloseAutoFocus={(e) => e.preventDefault()}
           >
             <div className="flex items-center justify-center gap-2">
-              {/* Toolbar badges (no refs here) */}
               <Badge
                 onClick={() => {
                   setOpenColor((v) => !v);
@@ -291,10 +283,10 @@ export default function HeadingInlineEditor({
         )}
       </Popover>
 
-      {/* COLOR POPOVER (anchored) */}
+      {/* COLOR POPOVER */}
       <Popover open={openColor} onOpenChange={setOpenColor}>
         <PopoverAnchor asChild>
-          <span ref={colorBadgeAnchorRef} />
+          <span />
         </PopoverAnchor>
         <PopoverContent
           side="top"
@@ -364,10 +356,10 @@ export default function HeadingInlineEditor({
         </PopoverContent>
       </Popover>
 
-      {/* SIZE POPOVER (anchored) */}
+      {/* SIZE POPOVER */}
       <Popover open={openSize} onOpenChange={setOpenSize}>
         <PopoverAnchor asChild>
-          <span ref={sizeBadgeAnchorRef} />
+          <span />
         </PopoverAnchor>
         <PopoverContent
           side="left"
@@ -404,10 +396,10 @@ export default function HeadingInlineEditor({
         </PopoverContent>
       </Popover>
 
-      {/* WEIGHT POPOVER (anchored) */}
+      {/* WEIGHT POPOVER */}
       <Popover open={openWeight} onOpenChange={setOpenWeight}>
         <PopoverAnchor asChild>
-          <span ref={weightBadgeAnchorRef} />
+          <span />
         </PopoverAnchor>
         <PopoverContent
           side="left"
@@ -442,7 +434,6 @@ export default function HeadingInlineEditor({
 }
 
 /* ---------- helpers ---------- */
-
 function clamp(n: number, min: number, max: number) {
   return Math.min(max, Math.max(min, n));
 }
@@ -452,10 +443,10 @@ function parseColorToRgba(input?: string) {
     /rgba?\s*\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})(?:\s*,\s*(\d*\.?\d+))?\s*\)/i
   );
   if (rgba) {
-    const r = clamp(parseInt(rgba[1], 10), 0, 255),
-      g = clamp(parseInt(rgba[2], 10), 0, 255),
-      b = clamp(parseInt(rgba[3], 10), 0, 255),
-      a = rgba[4] !== undefined ? clamp(parseFloat(rgba[4]), 0, 1) : 1;
+    const r = clamp(parseInt(rgba[1], 10), 0, 255);
+    const g = clamp(parseInt(rgba[2], 10), 0, 255);
+    const b = clamp(parseInt(rgba[3], 10), 0, 255);
+    const a = rgba[4] !== undefined ? clamp(parseFloat(rgba[4]), 0, 1) : 1;
     return { r, g, b, a };
   }
   const hex = input.trim();

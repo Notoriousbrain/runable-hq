@@ -120,14 +120,14 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
-exports.Prisma.ComponentScalarFieldEnum = {
+exports.Prisma.TitleComponentScalarFieldEnum = {
   id: 'id',
-  name: 'name',
-  sourceCode: 'sourceCode',
-  props: 'props',
-  schemaVer: 'schemaVer',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  text: 'text',
+  color: 'color',
+  size: 'size',
+  weight: 'weight',
+  updatedAt: 'updatedAt',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -135,24 +135,14 @@ exports.Prisma.SortOrder = {
   desc: 'desc'
 };
 
-exports.Prisma.JsonNullValueInput = {
-  JsonNull: Prisma.JsonNull
-};
-
 exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
 };
 
-exports.Prisma.JsonNullValueFilter = {
-  DbNull: Prisma.DbNull,
-  JsonNull: Prisma.JsonNull,
-  AnyNull: Prisma.AnyNull
-};
-
 
 exports.Prisma.ModelName = {
-  Component: 'Component'
+  TitleComponent: 'TitleComponent'
 };
 
 /**

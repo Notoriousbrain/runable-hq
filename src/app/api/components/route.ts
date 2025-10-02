@@ -1,22 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-export async function POST(req: Request) {
-  try {
-    const { name, sourceCode, props } = await req.json();
-    const component = await prisma.component.create({
-      data: { name, sourceCode, props },
-    });
-    return NextResponse.json(component);
-  } catch (err) {
-    console.error(err);
-    return NextResponse.json(
-      { error: "Failed to create component" },
-      { status: 500 }
-    );
-  }
-}
-
 export async function GET() {
   try {
     const components = await prisma.component.findMany({
@@ -24,10 +8,35 @@ export async function GET() {
     });
     return NextResponse.json(components);
   } catch (err) {
-    console.error(err);
-    return NextResponse.json(
-      { error: "Failed to fetch components" },
-      { status: 500 }
-    );
+    console.error("GET /api/components error:", err);
+    return NextResponse.json({ error: String(err) }, { status: 500 });
+  }
+}
+
+export async function POST(req: Request) {
+  try {
+    const { id, name, sourceCode, props, schemaVer } = await req.json();
+
+    if (!id) {
+      return NextResponse.json({ error: "id is required" }, { status: 400 });
+    }
+
+    // UPSERT: if exists, update; else create
+    const component = await prisma.component.upsert({
+      where: { id },
+      update: { name, sourceCode, props, schemaVer },
+      create: {
+        id,
+        name: name ?? "Untitled Component",
+        sourceCode: sourceCode ?? "",
+        props: props ?? {},
+        schemaVer: schemaVer ?? 1,
+      },
+    });
+
+    return NextResponse.json(component);
+  } catch (err) {
+    console.error("POST /api/components error:", err);
+    return NextResponse.json({ error: String(err) }, { status: 500 });
   }
 }

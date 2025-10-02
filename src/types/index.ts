@@ -1,26 +1,26 @@
-export type TextToken = {
-  title: string;
+export type TitleToken = {
+  text: string;
   color: string;
-  fontSize: number;
-  weight: 400 | 500 | 600 | 700;
+  size: number;
+  weight: 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
 };
 
 export type ShowcaseProps = {
-  tokens: Record<string, TextToken>;
+  titles: Record<string, TitleToken>;
 };
 
 export const initialShowcaseProps: ShowcaseProps = {
-  tokens: {
+  titles: {
     showcase: {
-      title: "Explore what people are building with Runable",
+      text: "Explore what people are building with Runable",
       color: "#ffffffb3",
-      fontSize: 16,
+      size: 16,
       weight: 400,
     },
     landing: {
-      title: "What can I get done for you?",
+      text: "What can I get done for you?",
       color: "#ffffff",
-      fontSize: 40,
+      size: 40,
       weight: 600,
     },
   },

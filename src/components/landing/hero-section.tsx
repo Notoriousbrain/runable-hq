@@ -1,3 +1,6 @@
+// src/components/hero-section.tsx
+"use client";
+
 import {
   ChevronRight,
   Crown,
@@ -5,14 +8,16 @@ import {
   Paperclip,
   PlayCircle,
 } from "lucide-react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import ActionCard from "./action-card";
-import { useShowcaseDoc } from "./editor-shell";
-import { ShowcaseProps } from "@/types";
+import type { ShowcaseProps } from "@/types";
 import TitleEditor from "../title-header";
 import { writeShowcaseCache } from "@/lib/cache";
+import { ComponentRecord, getComponent, updateComponent } from "@/lib/api";
+
+const LANDING_ID = "landing-heading";
 
 const HeroSection = () => {
   const cards: ReadonlyArray<{ title: string; img: string }> = [
@@ -46,25 +51,51 @@ const HeroSection = () => {
     },
   ];
 
-  const { showcaseRecord, setShowcaseRecord } = useShowcaseDoc();
+  const [landingRec, setLandingRec] =
+    useState<ComponentRecord<ShowcaseProps> | null>(null);
 
-  function onEdit(nextProps: ShowcaseProps) {
-    setShowcaseRecord((prev) => {
-      if (!prev) return prev as never;
+  // Fetch the single, seeded component (no creation here)
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const landing = await getComponent<ShowcaseProps>(LANDING_ID);
+        if (!cancelled) {
+          setLandingRec(landing);
+        }
+      } catch (e) {
+        console.error("Failed to fetch seeded components:", e);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  function onEditLanding(nextProps: ShowcaseProps) {
+    setLandingRec((prev) => {
+      if (!prev) return prev;
       const next = { ...prev, props: nextProps };
       writeShowcaseCache(next);
+      updateComponent(prev.id, { props: nextProps }).catch((e) =>
+        console.error("Update (landing) failed:", e)
+      );
       return next;
     });
   }
+  if (!landingRec) return null;
 
   return (
     <div className="mx-auto max-w-6xl min-h-[calc(100dvh-200px)] px-4 flex justify-center items-center">
-      <div>
-        <TitleEditor
-          token="landing"
-          value={showcaseRecord.props}
-          onChange={onEdit}
-        />
+      <div className="w-full">
+        {/* Main title (landing token) */}
+        <div className="mb-6 text-center">
+          <TitleEditor
+            token="landing"
+            value={landingRec.props}
+            onChange={onEditLanding}
+          />
+        </div>
 
         <div className="mx-auto mt-8 max-w-4xl">
           <div className="rounded-b-2xl rounded-t-[30px] bg-[#1a1a1b] p-[1px]">

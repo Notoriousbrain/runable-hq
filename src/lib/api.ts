@@ -1,5 +1,3 @@
-// src/lib/api.ts
-import type { Json } from "@/types/json";
 import type { ShowcaseProps } from "@/types";
 
 export type ComponentRecord<TProps = ShowcaseProps> = {
@@ -23,12 +21,10 @@ async function json<T>(res: Response): Promise<T> {
     try {
       body = await res.json();
     } catch {}
-
-    let msg = res.statusText || "Request failed";
-    if (body && typeof body === "object" && "error" in body) {
-      msg = String((body as { error?: unknown }).error ?? msg);
-    }
-
+    const msg =
+      (body && typeof body === "object" && "error" in body
+        ? String((body as { error?: unknown }).error)
+        : res.statusText) || "Request failed";
     const err = new Error(msg) as ApiError;
     err.code = res.status;
     err.body = body;
@@ -37,21 +33,20 @@ async function json<T>(res: Response): Promise<T> {
   return res.json() as Promise<T>;
 }
 
-export async function getComponent<TProps = Json>(
-  id: string
-): Promise<ComponentRecord<TProps>> {
+export async function getComponent<TProps = ShowcaseProps>(id: string) {
   const res = await fetch(`/api/components/${encodeURIComponent(id)}`, {
     cache: "no-store",
   });
   return json<ComponentRecord<TProps>>(res);
 }
 
-export async function createComponent<TProps = Json>(input: {
+export async function createOrGetComponent<TProps = ShowcaseProps>(input: {
+  id: string;
   name?: string;
   sourceCode?: string;
   props?: TProps;
   schemaVer?: number;
-}): Promise<ComponentRecord<TProps>> {
+}) {
   const res = await fetch(`/api/components`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -60,7 +55,7 @@ export async function createComponent<TProps = Json>(input: {
   return json<ComponentRecord<TProps>>(res);
 }
 
-export async function updateComponent<TProps = Json>(
+export async function updateComponent<TProps = ShowcaseProps>(
   id: string,
   data: {
     name?: string;
@@ -68,20 +63,11 @@ export async function updateComponent<TProps = Json>(
     props?: TProps;
     schemaVer?: number;
   }
-): Promise<ComponentRecord<TProps>> {
+) {
   const res = await fetch(`/api/components/${encodeURIComponent(id)}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
   return json<ComponentRecord<TProps>>(res);
-}
-
-export async function deleteComponent(id: string): Promise<void> {
-  const res = await fetch(`/api/components/${encodeURIComponent(id)}`, {
-    method: "DELETE",
-  });
-  if (!res.ok) {
-    await json(res);
-  }
 }

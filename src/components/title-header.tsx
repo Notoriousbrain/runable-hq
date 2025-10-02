@@ -7,69 +7,31 @@ import {
 } from "@/types";
 import { useEffect, useMemo, useState } from "react";
 import HeadingInlineEditor from "./editor-toolbar";
+import { readShowcaseCache } from "@/lib/cache";
 
 type Props = {
-  token: keyof ShowcaseProps["tokens"]; // e.g. "landing" | "showcase" | "pricing"
+  token: keyof ShowcaseProps["tokens"]; // e.g. "landing" | "showcase"
   value?: ShowcaseProps; // can be undefined initially
   onChange: (next: ShowcaseProps) => void;
   className?: string;
 };
 
-const CACHE_KEY = "runable.showcase.cache";
-
-/** Safely read cached props regardless of shape:
- * - { id, name, rev, sourceCode, props: { tokens: ... } }  <-- ComponentRecord
- * - { tokens: ... }                                       <-- raw ShowcaseProps
- */
-function readCachedProps(): ShowcaseProps | null {
-  if (typeof window === "undefined") return null;
-  try {
-    const raw = window.localStorage.getItem(CACHE_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw);
-
-    // Newer shape: ComponentRecord<ShowcaseProps>
-    if (parsed && typeof parsed === "object" && parsed.props?.tokens) {
-      return parsed.props as ShowcaseProps;
-    }
-
-    // Older/alternate shape: plain ShowcaseProps
-    if (parsed && typeof parsed === "object" && parsed.tokens) {
-      return parsed as ShowcaseProps;
-    }
-
-    return null;
-  } catch {
-    return null;
-  }
-}
-
-/** Get a safe token from (props or fallback) */
+/** Get a safe token from props, cache, or defaults */
 function tokenFrom(
   props: ShowcaseProps | null | undefined,
   key: keyof ShowcaseProps["tokens"],
   fallbackBase: ShowcaseProps
 ): TextToken {
-  // prefer given props
-  const t1 = props?.tokens?.[key];
-  if (t1) return t1;
-
-  // then cached
-  const cached = readCachedProps();
-  const t2 = cached?.tokens?.[key];
-  if (t2) return t2;
-
-  // then initial defaults
-  const t3 = fallbackBase.tokens[key];
-  if (t3) return t3;
-
-  // ultimate safety
-  return {
-    title: "Editable title",
-    color: "#ffffff",
-    fontSize: 20,
-    weight: 500,
-  };
+  return (
+    props?.tokens?.[key] ??
+    readShowcaseCache()?.tokens?.[key] ??
+    fallbackBase.tokens[key] ?? {
+      title: "Editable title",
+      color: "#ffffff",
+      fontSize: 20,
+      weight: 500,
+    }
+  );
 }
 
 export default function TitleEditor({
@@ -90,7 +52,7 @@ export default function TitleEditor({
 
   // on mount: if cache has a better value than the initial one, use it
   useEffect(() => {
-    const cached = readCachedProps();
+    const cached = readShowcaseCache();
     const cachedToken = cached?.tokens?.[token];
     if (cachedToken) setFallback(cachedToken);
   }, [token]);

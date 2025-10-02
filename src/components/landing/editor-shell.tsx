@@ -10,7 +10,7 @@ import {
   useState,
   type PropsWithChildren,
 } from "react";
-import { createComponent, getComponent, type ComponentRecord } from "@/lib/api";
+import { getComponent, type ComponentRecord } from "@/lib/api";
 import { initialShowcaseProps, type ShowcaseProps } from "@/types/";
 import Topbar from "./top-bar";
 import Sidebar from "./sidebar";
@@ -28,6 +28,7 @@ function clearShowcaseCache() {
     localStorage.removeItem(CACHE_KEY);
   } catch {}
 }
+
 type Ctx = {
   showcaseRecord: ComponentRecord<ShowcaseProps>;
   setShowcaseRecord: React.Dispatch<
@@ -55,14 +56,16 @@ function safeReadCache(): ComponentRecord<ShowcaseProps> | null {
   }
 }
 
-// Stable local placeholder to avoid hydration mismatch.
+// Stable local placeholder to avoid hydration mismatch (matches new ComponentRecord shape)
 const STABLE_DEFAULT_DOC: ComponentRecord<ShowcaseProps> = {
   id: "shared-doc",
   name: "ShowcaseSection",
-  rev: 0,
   sourceCode: `export default function Showcase(){return null}`,
   props: initialShowcaseProps,
-} as ComponentRecord<ShowcaseProps>;
+  schemaVer: 1,
+  createdAt: new Date(0).toISOString(),
+  updatedAt: new Date(0).toISOString(),
+};
 
 export default function EditorShell({ children }: PropsWithChildren) {
   const [hydrated, setHydrated] = useState(false);
@@ -83,18 +86,13 @@ export default function EditorShell({ children }: PropsWithChildren) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const sidebarWidth = sidebarOpen ? SIDEBAR_WIDTH : 0;
 
-  // 🔧 Start with SSR-safe default (NO cache here)
+  // Start with SSR-safe default (NO create, NO cache write here)
   const [doc, setDoc] =
     useState<ComponentRecord<ShowcaseProps>>(STABLE_DEFAULT_DOC);
   const [error, setError] = useState<string | null>(null);
 
   // Hydration guard
   const hydratedOnceRef = useRef(false);
-
-  const ALLOW_CREATE_IF_MISSING =
-    typeof process !== "undefined"
-      ? process.env.NEXT_PUBLIC_ALLOW_CREATE === "1"
-      : false;
 
   useEffect(() => {
     setHydrated(true);
@@ -121,55 +119,30 @@ export default function EditorShell({ children }: PropsWithChildren) {
             : "";
         const resolvedId = idFromQuery || idFromEnv;
 
-        if (resolvedId) {
-          try {
-            const rec = await getComponent<ShowcaseProps>(resolvedId);
-            if (!alive) return;
-            setDoc(rec);
-            writeShowcaseCache(rec);
-            return;
-          } catch (e) {
-            const err = e as { code?: number; message?: string };
-            if (err?.code === 404) {
-              // cached/shared id is stale → clear and recover
-              clearShowcaseCache();
-              if (ALLOW_CREATE_IF_MISSING) {
-                const created = await createComponent<ShowcaseProps>({
-                  name: "ShowcaseSection",
-                  sourceCode: STABLE_DEFAULT_DOC.sourceCode,
-                  props: STABLE_DEFAULT_DOC.props,
-                });
-                if (!alive) return;
-                setDoc(created);
-                writeShowcaseCache(created);
-                console.info("Created new shared component id:", created.id);
-                return;
-              }
-              if (!alive) return;
-              setError("The requested document was not found.");
-              // keep showing STABLE_DEFAULT_DOC
-              return;
-            }
-            throw e; // rethrow non-404s
-          }
-        }
-
-        if (ALLOW_CREATE_IF_MISSING) {
-          const created = await createComponent<ShowcaseProps>({
-            name: "ShowcaseSection",
-            sourceCode: STABLE_DEFAULT_DOC.sourceCode,
-            props: STABLE_DEFAULT_DOC.props,
-          });
-          if (!alive) return;
-          setDoc(created);
-          writeShowcaseCache(created);
-          console.info("Created shared component id:", created.id);
+        if (!resolvedId) {
+          setError(
+            "No shared document id. Provide NEXT_PUBLIC_SHOWCASE_ID or ?doc=<id>."
+          );
           return;
         }
 
-        setError(
-          "No shared document id. Provide NEXT_PUBLIC_SHOWCASE_ID or ?doc=<id>."
-        );
+        try {
+          const rec = await getComponent<ShowcaseProps>(resolvedId);
+          if (!alive) return;
+          setDoc(rec);
+          writeShowcaseCache(rec);
+          return;
+        } catch (e: unknown) {
+          // if 404 -> seeded id missing or wrong
+          const maybe = e as { code?: number; message?: string };
+          if (maybe?.code === 404) {
+            clearShowcaseCache();
+            if (!alive) return;
+            setError("The requested document was not found.");
+            return;
+          }
+          throw e; // rethrow non-404s
+        }
       } catch (e) {
         if (!alive) return;
         setError(
@@ -183,7 +156,7 @@ export default function EditorShell({ children }: PropsWithChildren) {
     };
   }, []);
 
-  // 3) Also write cache whenever doc changes locally
+  // Write cache whenever doc changes locally
   useEffect(() => {
     writeShowcaseCache(doc);
   }, [doc]);
@@ -239,10 +212,9 @@ export default function EditorShell({ children }: PropsWithChildren) {
             </button>
 
             <div className="px-4 text-[11px] text-white/50">
-              {/* 👇 prevent SSR/CSR mismatch for ID/Rev */}
+              {/* 👇 prevent SSR/CSR mismatch for ID display */}
               <span suppressHydrationWarning>
-                ID: {hydrated ? doc.id : STABLE_DEFAULT_DOC.id} • Rev:{" "}
-                {hydrated ? doc.rev : STABLE_DEFAULT_DOC.rev}
+                ID: {hydrated ? doc.id : STABLE_DEFAULT_DOC.id}
               </span>
               {error ? (
                 <span className="ml-2 text-red-400">• {error}</span>
