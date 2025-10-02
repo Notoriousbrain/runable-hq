@@ -19,6 +19,8 @@ type Props = {
   className?: string;
 };
 
+const WEIGHTS = [400, 500, 600, 700] as const;
+
 export default function HeadingInlineEditor({
   value,
   onChange,
@@ -78,10 +80,11 @@ export default function HeadingInlineEditor({
     if (!editing) return;
     const el = hRef.current;
     if (!el) return;
-    if (el.innerText !== localText) el.innerText = localText;
+    el.innerText = localText;
     el.focus({ preventScroll: true });
     requestAnimationFrame(() => moveCaretToEnd(el));
-  }, [editing, localText]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editing]);
 
   useEffect(() => {
     if (!editing) return;
@@ -268,7 +271,7 @@ export default function HeadingInlineEditor({
           sideOffset={8}
           collisionPadding={16}
           data-subpopover="true"
-          className="min-w=[320px] rounded-2xl border border-white/10 bg-white/10 backdrop-blur-md shadow-[0_10px_30px_rgba(0,0,0,0.35)] p-3"
+          className="min-w-[320px] rounded-2xl border border-white/10 bg-white/10 backdrop-blur-md shadow-[0_10px_30px_rgba(0,0,0,0.35)] p-3"
           onOpenAutoFocus={(e) => e.preventDefault()}
           onCloseAutoFocus={(e) => e.preventDefault()}
         >
@@ -383,7 +386,7 @@ export default function HeadingInlineEditor({
         >
           <div className="text-xs text-white/80 mb-2">Font weight</div>
           <div className="grid grid-cols-4 gap-2">
-            {[400, 500, 600, 700].map((w) => {
+            {WEIGHTS.map((w) => {
               const active = (currentWeight ?? 400) === w;
               return (
                 <Button

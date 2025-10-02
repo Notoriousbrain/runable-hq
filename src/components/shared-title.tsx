@@ -1,4 +1,3 @@
-// src/components/shared-title.tsx
 "use client";
 
 import React from "react";
@@ -10,7 +9,6 @@ type Props = {
   id: string;
   className?: string;
   as?: keyof React.JSX.IntrinsicElements;
-  /** Optional skeleton size (Tailwind classes) */
   skeletonClassName?: string;
 };
 
