@@ -1,21 +1,20 @@
 // src/lib/api.ts
 import type { Json } from "@/types/json";
+import type { ShowcaseProps } from "@/types";
 
-export type ComponentRecord<TProps = Json> = {
+export type ComponentRecord<TProps = ShowcaseProps> = {
   id: string;
   name: string;
   sourceCode: string;
   props: TProps;
-  rev: number;
   createdAt: string;
   updatedAt: string;
   schemaVer?: number;
 };
 
-export type UpdateConflictError<TProps = Json> = Error & {
+export type ApiError = Error & {
   code?: number;
-  data?: { serverRev: number; server: { sourceCode: string; props: TProps } };
-  body?: unknown; // <- carry server JSON body through for other errors (404, etc.)
+  body?: unknown; // JSON body for server errors (404, 500, etc.)
 };
 
 async function json<T>(res: Response): Promise<T> {
@@ -23,20 +22,21 @@ async function json<T>(res: Response): Promise<T> {
     let body: unknown = null;
     try {
       body = await res.json();
-    } catch {}
-    const msg =
-      (body && typeof body === "object" && body.error) ||
-      res.statusText ||
-      "Request failed";
-    const err = new Error(msg) as UpdateConflictError;
-    err.code = res.status;
-    if (res.status === 409 && body && typeof body === "object") {
-      err.data = body.data;
+    } catch {
+      // ignore parse error
     }
+
+    let msg = res.statusText || "Request failed";
+    if (body && typeof body === "object" && "error" in body) {
+      msg = String((body as { error?: unknown }).error ?? msg);
+    }
+
+    const err = new Error(msg) as ApiError;
+    err.code = res.status;
     err.body = body;
     throw err;
   }
-  return res.json();
+  return res.json() as Promise<T>;
 }
 
 /** Read a component by id */
@@ -49,9 +49,8 @@ export async function getComponent<TProps = Json>(
   return json<ComponentRecord<TProps>>(res);
 }
 
-/** Create a component (used only when allowed) */
+/** Create a new component */
 export async function createComponent<TProps = Json>(input: {
-  id?: string;
   name?: string;
   sourceCode?: string;
   props?: TProps;
@@ -65,20 +64,30 @@ export async function createComponent<TProps = Json>(input: {
   return json<ComponentRecord<TProps>>(res);
 }
 
-/** Update with optimistic concurrency */
+/** Update a component (always overwrites DB state) */
 export async function updateComponent<TProps = Json>(
   id: string,
   data: {
-    rev: number;
+    name?: string;
     sourceCode?: string;
     props?: TProps;
     schemaVer?: number;
   }
-): Promise<{ id: string; rev: number }> {
+): Promise<ComponentRecord<TProps>> {
   const res = await fetch(`/api/components/${encodeURIComponent(id)}`, {
-    method: "PATCH",
+    method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
-  return json<{ id: string; rev: number }>(res);
+  return json<ComponentRecord<TProps>>(res);
+}
+
+/** Delete a component */
+export async function deleteComponent(id: string): Promise<void> {
+  const res = await fetch(`/api/components/${encodeURIComponent(id)}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) {
+    await json(res); // throws ApiError
+  }
 }
