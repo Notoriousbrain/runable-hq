@@ -1,5 +1,3 @@
-// lib/prisma.ts
-
 import { PrismaClient } from "prisma/src/generated/prisma";
 
 const globalForPrisma = globalThis as unknown as {

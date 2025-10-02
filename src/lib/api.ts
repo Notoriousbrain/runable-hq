@@ -14,7 +14,7 @@ export type ComponentRecord<TProps = ShowcaseProps> = {
 
 export type ApiError = Error & {
   code?: number;
-  body?: unknown; // JSON body for server errors (404, 500, etc.)
+  body?: unknown;
 };
 
 async function json<T>(res: Response): Promise<T> {
@@ -22,9 +22,7 @@ async function json<T>(res: Response): Promise<T> {
     let body: unknown = null;
     try {
       body = await res.json();
-    } catch {
-      // ignore parse error
-    }
+    } catch {}
 
     let msg = res.statusText || "Request failed";
     if (body && typeof body === "object" && "error" in body) {
@@ -39,7 +37,6 @@ async function json<T>(res: Response): Promise<T> {
   return res.json() as Promise<T>;
 }
 
-/** Read a component by id */
 export async function getComponent<TProps = Json>(
   id: string
 ): Promise<ComponentRecord<TProps>> {
@@ -49,7 +46,6 @@ export async function getComponent<TProps = Json>(
   return json<ComponentRecord<TProps>>(res);
 }
 
-/** Create a new component */
 export async function createComponent<TProps = Json>(input: {
   name?: string;
   sourceCode?: string;
@@ -64,7 +60,6 @@ export async function createComponent<TProps = Json>(input: {
   return json<ComponentRecord<TProps>>(res);
 }
 
-/** Update a component (always overwrites DB state) */
 export async function updateComponent<TProps = Json>(
   id: string,
   data: {
@@ -82,12 +77,11 @@ export async function updateComponent<TProps = Json>(
   return json<ComponentRecord<TProps>>(res);
 }
 
-/** Delete a component */
 export async function deleteComponent(id: string): Promise<void> {
   const res = await fetch(`/api/components/${encodeURIComponent(id)}`, {
     method: "DELETE",
   });
   if (!res.ok) {
-    await json(res); // throws ApiError
+    await json(res);
   }
 }

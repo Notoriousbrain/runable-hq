@@ -1,4 +1,3 @@
-// src/lib/cache.ts
 import type { ComponentRecord } from "@/lib/api";
 import type { ShowcaseProps } from "@/types";
 

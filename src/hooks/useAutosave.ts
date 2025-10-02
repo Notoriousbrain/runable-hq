@@ -16,51 +16,25 @@ type AutosaveData<TProps = Json> = {
   props?: TProps;
 };
 
-type ConflictPayload<TProps = Json> = {
-  rev: number;
-  sourceCode: string;
-  props: TProps;
-};
-
-type OnSaved = (next: { rev: number }) => void;
-type OnConflict<TProps> = (server: ConflictPayload<TProps>) => void;
-
-type UpdateConflictError<TProps = Json> = Error & {
-  code?: number;
-  data?: { serverRev: number; server: { sourceCode: string; props: TProps } };
-};
-
 export function useAutosave<TProps = Json>({
   id,
-  initialRev,
   data,
   enabled = true,
   delay = 1200,
   onSaved,
-  onConflict,
 }: {
   id: string;
-  initialRev: number;
   data: AutosaveData<TProps>;
   enabled?: boolean;
   delay?: number;
-  onSaved?: OnSaved;
-  onConflict?: OnConflict<TProps>;
+  onSaved?: (next: { updatedAt: string }) => void;
 }) {
   const [saving, setSaving] = useState(false);
-  const lastRev = useRef(initialRev);
-  const timer = useRef<number | null>(null);
   const mounted = useRef(true);
-
+  const timer = useRef<number | null>(null);
   const lastSentPayload = useRef<string | null>(null);
 
   const onSavedRef = useLatest(onSaved);
-  const onConflictRef = useLatest(onConflict);
-
-  useEffect(() => {
-    lastRev.current = initialRev;
-    lastSentPayload.current = null;
-  }, [id, initialRev]);
 
   useEffect(() => {
     mounted.current = true;
@@ -71,10 +45,6 @@ export function useAutosave<TProps = Json>({
   }, []);
 
   const stablePayload = useMemo(() => JSON.stringify(data), [data]);
-
-  useEffect(() => {
-    lastSentPayload.current = null;
-  }, [id]);
 
   useEffect(() => {
     if (!enabled || !id) return;
@@ -88,35 +58,17 @@ export function useAutosave<TProps = Json>({
         if (!mounted.current) return;
         setSaving(true);
 
-        const updated = await updateComponent<TProps>(id, {
-          ...data,
-          rev: lastRev.current,
-        });
+        const updated = await updateComponent<TProps>(id, data);
 
-        lastRev.current = updated.rev;
         lastSentPayload.current = stablePayload;
-        onSavedRef.current?.({ rev: updated.rev });
-      } catch (err: unknown) {
-        const e = err as UpdateConflictError<TProps>;
-        if (e?.code === 409 && e.data) {
-          lastRev.current = e.data.serverRev;
-          lastSentPayload.current = JSON.stringify({
-            sourceCode: e.data.server.sourceCode,
-            props: e.data.server.props,
-          });
-          onConflictRef.current?.({
-            rev: e.data.serverRev,
-            sourceCode: e.data.server.sourceCode,
-            props: e.data.server.props as TProps,
-          });
-        } else {
-          console.error(e);
-        }
+        onSavedRef.current?.({ updatedAt: updated.updatedAt });
+      } catch (err) {
+        console.error("Autosave failed:", err);
       } finally {
         if (mounted.current) setSaving(false);
       }
     }, delay);
-  }, [stablePayload, id, enabled, delay, onSavedRef, onConflictRef]);
+  }, [stablePayload, id, enabled, delay, onSavedRef]);
 
-  return { saving, currentRev: lastRev.current };
+  return { saving };
 }
