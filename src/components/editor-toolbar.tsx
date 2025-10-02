@@ -266,7 +266,7 @@ export default function HeadingInlineEditor({
           <span />
         </PopoverAnchor>
         <PopoverContent
-          side="top"
+          side="left"
           align="center"
           sideOffset={8}
           collisionPadding={16}
@@ -340,10 +340,8 @@ export default function HeadingInlineEditor({
         <PopoverContent
           side="left"
           align="center"
-          sideOffset={12}
-          alignOffset={4}
+          sideOffset={8}
           collisionPadding={16}
-          avoidCollisions
           data-subpopover="true"
           className="min-w-[280px] rounded-2xl border border-white/10 bg-white/10 backdrop-blur-md shadow-[0_10px_30px_rgba(0,0,0,0.35)] p-3"
           onOpenAutoFocus={(e) => e.preventDefault()}
@@ -379,6 +377,8 @@ export default function HeadingInlineEditor({
         <PopoverContent
           side="left"
           align="center"
+          sideOffset={8}
+          collisionPadding={16}
           data-subpopover="true"
           className="min-w-[300px] rounded-2xl border border-white/10 bg-white/10 backdrop-blur-md shadow-[0_10px_30px_rgba(0,0,0,0.35)] p-3"
           onOpenAutoFocus={(e) => e.preventDefault()}
