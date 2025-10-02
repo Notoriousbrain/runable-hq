@@ -1,6 +1,7 @@
 "use client";
 
 import { Badge } from "../ui/badge";
+import SharedTitle from "../shared-title";
 
 export default function Topbar() {
   return (
@@ -9,7 +10,9 @@ export default function Topbar() {
         <div className="h-5 w-5 rounded grid place-items-center bg-white text-black text-[10px] font-bold">
           R
         </div>
-        <span className="font-medium">Runable</span>
+        <span className="font-medium">
+          <SharedTitle id="topbar-brand" skeletonClassName="h-4 w-16" />
+        </span>
       </div>
 
       <div className="ms-auto flex items-center gap-3">
@@ -30,10 +33,17 @@ export default function Topbar() {
             >
               <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"></path>
             </svg>
-            5000
+            <span className="inline-block min-w-[2.5rem]">
+              <SharedTitle id="topbar-credits" skeletonClassName="h-4 w-10" />
+            </span>
           </span>
-          <span>| </span>
-          <span className="text-[#5193cd] font-bold">Upgrade</span>
+          <span>|</span>
+          <span className="text-[#5193cd] font-bold inline-block min-w-[3.25rem]">
+            <SharedTitle
+              id="landing-upgrade-button"
+              skeletonClassName="h-4 w-12"
+            />
+          </span>
         </Badge>
 
         <div className="bg-[#5193cd] rounded-full py-2 px-4">R</div>

@@ -125,7 +125,8 @@ export default function ShowcaseSection() {
       <div className="relative flex items-center justify-center">
         <div className="hidden lg:flex h-px w-full bg-white/10" />
         <div className="w-full">
-          <SharedTitle id={SHOWCASE_ID} />
+          {/* Slightly wider skeleton to match centered H2 */}
+          <SharedTitle id={SHOWCASE_ID} skeletonClassName="h-6 w-72 mx-auto" />
         </div>
         <div className="hidden lg:flex h-px w-full bg-white/10" />
       </div>
@@ -144,7 +145,8 @@ export default function ShowcaseSection() {
             >
               {c.icon}
               <span>
-                <SharedTitle id={c.labelId} />
+                {/* Chip label skeleton tuned to ~text-sm */}
+                <SharedTitle id={c.labelId} skeletonClassName="h-4 w-16" />
               </span>
             </button>
           ))}

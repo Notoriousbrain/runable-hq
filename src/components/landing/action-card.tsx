@@ -43,8 +43,8 @@ export default function ActionCard({
             className={`h-full w-full object-cover rounded-t-lg transition-opacity duration-300 ${
               imgLoaded ? "opacity-100" : "opacity-0"
             }`}
-            onLoadingComplete={() => setImgLoaded(true)}
-            priority={false}
+            onLoad={() => setImgLoaded(true)}
+            priority
           />
         </div>
       </div>

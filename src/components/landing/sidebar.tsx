@@ -1,4 +1,5 @@
 "use client";
+
 import { Badge } from "@/components/ui/badge";
 import {
   House,
@@ -12,6 +13,7 @@ import {
   CreditCard,
   MessageCircle,
 } from "lucide-react";
+import SharedTitle from "../shared-title";
 
 export default function Sidebar() {
   return (
@@ -19,26 +21,84 @@ export default function Sidebar() {
       <nav className="p-2 space-y-2 overflow-auto">
         <SidebarItem
           icon={<Plus className="h-4 w-4" />}
-          label="New Chat"
+          label={
+            <SharedTitle id="sidebar-new-chat" skeletonClassName="h-4 w-20" />
+          }
           active
         />
-        <SectionTitle>My Workspace</SectionTitle>
-        <SidebarItem icon={<Search className="h-4 w-4" />} label="Search" />
+
+        <SectionTitle>
+          <SharedTitle
+            id="sidebar-section-workspace"
+            skeletonClassName="h-3 w-24"
+          />
+        </SectionTitle>
+
+        <SidebarItem
+          icon={<Search className="h-4 w-4" />}
+          label={
+            <SharedTitle
+              id="sidebar-item-search"
+              skeletonClassName="h-4 w-14"
+            />
+          }
+        />
         <SidebarItem
           icon={<HardDrive className="h-4 w-4" />}
-          label="Run Drive"
+          label={
+            <SharedTitle
+              id="sidebar-item-run-drive"
+              skeletonClassName="h-4 w-16"
+            />
+          }
         />
-        <SidebarItem icon={<Mic2 className="h-4 w-4" />} label="Podcasts" />
-        <SidebarItem icon={<Globe className="h-4 w-4" />} label="Websites" />
-        <SectionTitle>My Chats</SectionTitle>
-        <EmptyRow label="No chats" />
+        <SidebarItem
+          icon={<Mic2 className="h-4 w-4" />}
+          label={
+            <SharedTitle
+              id="sidebar-item-podcasts"
+              skeletonClassName="h-4 w-16"
+            />
+          }
+        />
+        <SidebarItem
+          icon={<Globe className="h-4 w-4" />}
+          label={
+            <SharedTitle
+              id="sidebar-item-websites"
+              skeletonClassName="h-4 w-16"
+            />
+          }
+        />
+
+        <SectionTitle>
+          <SharedTitle
+            id="sidebar-section-chats"
+            skeletonClassName="h-3 w-16"
+          />
+        </SectionTitle>
+        <EmptyRow
+          label={
+            <SharedTitle
+              id="sidebar-empty-no-chats"
+              skeletonClassName="h-4 w-14"
+            />
+          }
+        />
       </nav>
 
       <div className="mt-auto p-3 space-y-3">
+        {/* Feedback card */}
         <div className="rounded-xl bg-[#5193cd] text-black p-3">
-          <div className="text-white font-medium">Got Feedback? DM us</div>
+          <div className="text-white font-medium">
+            <SharedTitle
+              id="sidebar-feedback-title"
+              skeletonClassName="h-4 w-40"
+            />
+          </div>
           <div className="mt-2 flex items-center gap-2 text-xs">
             <Badge className="flex items-center justify-center bg-[#F9F9F91A] hover:bg-[#F9F9F933] border-[#F9F9F94D] border-[0.5px] p-1 rounded-sm">
+              {/* GitHub-ish badge SVG */}
               <svg
                 width="16"
                 height="12"
@@ -54,6 +114,7 @@ export default function Sidebar() {
               </svg>
             </Badge>
             <Badge className="flex items-center justify-center bg-[#F9F9F91A] hover:bg-[#F9F9F933] border-[#F9F9F94D] border-[0.5px] p-1 rounded-sm">
+              {/* Vercel-ish badge SVG */}
               <svg
                 width="14"
                 height="12"
@@ -77,6 +138,7 @@ export default function Sidebar() {
               </svg>
             </Badge>
             <Badge className="flex items-center justify-center bg-[#F9F9F91A] hover:bg-[#F9F9F933] border-[#F9F9F94D] border-[0.5px] p-1 rounded-sm">
+              {/* LinkedIn-ish badge SVG */}
               <svg
                 width="12"
                 height="12"
@@ -92,6 +154,7 @@ export default function Sidebar() {
               </svg>
             </Badge>
             <Badge className="flex items-center justify-center bg-[#F9F9F91A] hover:bg-[#F9F9F933] border-[#F9F9F94D] border-[0.5px] p-1 rounded-sm">
+              {/* Slack-ish badge SVG */}
               <svg
                 width="16"
                 height="16"
@@ -141,12 +204,20 @@ export default function Sidebar() {
             </Badge>
           </div>
         </div>
+
+        {/* Referral card */}
         <div className="rounded-xl bg-[#0f0f0f] p-3 text-sm">
           <div className="font-semibold text-lg text-white ">
-            Invite friends!
+            <SharedTitle
+              id="sidebar-referral-title"
+              skeletonClassName="h-5 w-32"
+            />
           </div>
           <div className="text-white/60">
-            Get 5,000 credits for each referral
+            <SharedTitle
+              id="sidebar-referral-subtitle"
+              skeletonClassName="h-4 w-56"
+            />
           </div>
         </div>
       </div>
@@ -169,7 +240,7 @@ function SidebarItem({
   active,
 }: {
   icon: React.ReactNode;
-  label: string;
+  label: React.ReactNode;
   kbd?: string;
   active?: boolean;
 }) {
@@ -196,7 +267,7 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
   );
 }
 
-function EmptyRow({ label }: { label: string }) {
+function EmptyRow({ label }: { label: React.ReactNode }) {
   return (
     <div className="rounded-lg border border-dashed border-white/10 text-white/40 text-xs px-2 py-6">
       {label}

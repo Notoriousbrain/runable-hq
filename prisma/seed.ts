@@ -1,23 +1,14 @@
-// prisma/seed.ts
 import { PrismaClient } from "./src/generated/prisma";
 
 const prisma = new PrismaClient();
 
-/**
- * All landing + showcase page texts.
- * - Heading
- * - Category labels
- * - Showcase item titles/descriptions
- * - Badge labels used inside item cards
- */
 const TEXTS: Array<{
   id: string;
   text: string;
-  color: string; // used on create only
-  size: number; // used on create only
-  weight: number; // used on create only
+  color: string;
+  size: number;
+  weight: number;
 }> = [
-  // ---- HERO & LANDING ----
   {
     id: "landing-heading",
     text: "What can I get done for you?",
@@ -54,8 +45,6 @@ const TEXTS: Array<{
     weight: 900,
   },
 
-  // ---- SHOWCASE SECTION ----
-  // Section heading
   {
     id: "showcase-heading",
     text: "Explore what people are building with Runable",
@@ -63,8 +52,6 @@ const TEXTS: Array<{
     size: 16,
     weight: 400,
   },
-
-  // Category chips (labels only; icons are in code)
   {
     id: "showcase-cat-featured",
     text: "Featured",
@@ -129,7 +116,6 @@ const TEXTS: Array<{
     weight: 600,
   },
 
-  // Showcase item titles (1..8)
   {
     id: "showcase-item-1-title",
     text: "Startup Ebook Landing Page",
@@ -187,7 +173,6 @@ const TEXTS: Array<{
     weight: 600,
   },
 
-  // Showcase item descriptions (1..8)
   {
     id: "showcase-item-1-desc",
     text: "High-conversion landing page designed to capture leads for your startup’s downloadable ebook.",
@@ -245,7 +230,6 @@ const TEXTS: Array<{
     weight: 400,
   },
 
-  // Badge labels used inside cards
   {
     id: "showcase-badge-marketing",
     text: "Marketing",
@@ -316,13 +300,106 @@ const TEXTS: Array<{
     size: 11,
     weight: 600,
   },
+
+  {
+    id: "topbar-brand",
+    text: "Runable",
+    color: "#ffffff",
+    size: 16,
+    weight: 600,
+  },
+  {
+    id: "topbar-credits",
+    text: "5000",
+    color: "#ffffff",
+    size: 14,
+    weight: 700,
+  },
+
+  {
+    id: "sidebar-new-chat",
+    text: "New Chat",
+    color: "#ffffff",
+    size: 14,
+    weight: 600,
+  },
+  {
+    id: "sidebar-section-workspace",
+    text: "My Workspace",
+    color: "#ffffff80",
+    size: 11,
+    weight: 700,
+  },
+  {
+    id: "sidebar-item-search",
+    text: "Search",
+    color: "#ffffff",
+    size: 14,
+    weight: 500,
+  },
+  {
+    id: "sidebar-item-run-drive",
+    text: "Run Drive",
+    color: "#ffffff",
+    size: 14,
+    weight: 500,
+  },
+  {
+    id: "sidebar-item-podcasts",
+    text: "Podcasts",
+    color: "#ffffff",
+    size: 14,
+    weight: 500,
+  },
+  {
+    id: "sidebar-item-websites",
+    text: "Websites",
+    color: "#ffffff",
+    size: 14,
+    weight: 500,
+  },
+  {
+    id: "sidebar-section-chats",
+    text: "My Chats",
+    color: "#ffffff80",
+    size: 11,
+    weight: 700,
+  },
+  {
+    id: "sidebar-empty-no-chats",
+    text: "No chats",
+    color: "#ffffff66",
+    size: 12,
+    weight: 500,
+  },
+  {
+    id: "sidebar-feedback-title",
+    text: "Got Feedback? DM us",
+    color: "#ffffff",
+    size: 14,
+    weight: 600,
+  },
+  {
+    id: "sidebar-referral-title",
+    text: "Invite friends!",
+    color: "#ffffff",
+    size: 16,
+    weight: 700,
+  },
+  {
+    id: "sidebar-referral-subtitle",
+    text: "Get 5,000 credits for each referral",
+    color: "#ffffffb3",
+    size: 13,
+    weight: 400,
+  },
 ];
 
 async function main() {
   for (const t of TEXTS) {
     await prisma.titleComponent.upsert({
       where: { id: t.id },
-      update: { text: t.text }, // do not overwrite styling on update
+      update: { text: t.text },
       create: {
         id: t.id,
         text: t.text,
