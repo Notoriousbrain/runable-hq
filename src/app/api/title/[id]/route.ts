@@ -1,12 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient, Prisma } from "prisma/src/generated/prisma";
 
-// If your Prisma client lives elsewhere, adjust the import above accordingly.
-// e.g. `@/generated/prisma` or `@prisma/client`
-
 const prisma = new PrismaClient();
 
-// Derive the row type directly from Prisma so we don't hand-roll it.
 type TitleRow = NonNullable<
   Awaited<ReturnType<typeof prisma.titleComponent.findUnique>>
 >;
@@ -46,7 +42,6 @@ export async function PUT(
 
   const body = (await req.json()) as unknown;
 
-  // runtime narrowing (no `any`)
   const data: {
     text?: string;
     color?: string;
