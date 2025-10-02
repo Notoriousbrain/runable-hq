@@ -1,40 +1,32 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import {
   createContext,
   useContext,
   useEffect,
-  useMemo,
   useRef,
   useState,
   type PropsWithChildren,
 } from "react";
-import { getComponent, type ComponentRecord } from "@/lib/api";
-import { initialShowcaseProps, type ShowcaseProps } from "@/types/";
+import { listTitles, type TitleComponentRecord } from "@/lib/api";
+import { initialShowcaseProps, type ShowcaseProps } from "@/types";
 import Topbar from "./top-bar";
 import Sidebar from "./sidebar";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { writeShowcaseCache } from "@/lib/cache";
+import {
+  writeShowcaseCache,
+  readShowcaseCache,
+  clearShowcaseCache,
+} from "@/lib/cache";
+import { toTitleToken } from "@/lib/normalizers";
 
 const SIDEBAR_WIDTH = 300;
 const TOPBAR_HEIGHT = 60;
 const CONTENT_SPACING = 8;
 
-const CACHE_KEY = "runable.showcase.cache";
-
-function clearShowcaseCache() {
-  try {
-    localStorage.removeItem(CACHE_KEY);
-  } catch {}
-}
-
 type Ctx = {
-  showcaseRecord: ComponentRecord<ShowcaseProps>;
-  setShowcaseRecord: React.Dispatch<
-    React.SetStateAction<ComponentRecord<ShowcaseProps>>
-  >;
-  sharedId: string;
+  showcase: ShowcaseProps;
+  setShowcase: React.Dispatch<React.SetStateAction<ShowcaseProps>>;
 };
 
 const ShowcaseCtx = createContext<Ctx | null>(null);
@@ -45,109 +37,43 @@ export function useShowcaseDoc(): Ctx {
   return ctx;
 }
 
-// --- util: read cached ComponentRecord for faster hydration ---
-function safeReadCache(): ComponentRecord<ShowcaseProps> | null {
-  if (typeof window === "undefined") return null;
-  try {
-    const raw = window.localStorage.getItem(CACHE_KEY);
-    return raw ? (JSON.parse(raw) as ComponentRecord<ShowcaseProps>) : null;
-  } catch {
-    return null;
-  }
-}
-
-// Stable local placeholder to avoid hydration mismatch (matches new ComponentRecord shape)
-const STABLE_DEFAULT_DOC: ComponentRecord<ShowcaseProps> = {
-  id: "shared-doc",
-  name: "ShowcaseSection",
-  sourceCode: `export default function Showcase(){return null}`,
-  props: initialShowcaseProps,
-  schemaVer: 1,
-  createdAt: new Date(0).toISOString(),
-  updatedAt: new Date(0).toISOString(),
-};
-
 export default function EditorShell({ children }: PropsWithChildren) {
   const [hydrated, setHydrated] = useState(false);
-
-  // Resolve the *shared* component id (query param > env)
-  const searchParams =
-    typeof window !== "undefined"
-      ? new URLSearchParams(window.location.search)
-      : null;
-  const idFromQuery = searchParams?.get("doc") ?? "";
-  const idFromEnv =
-    typeof process !== "undefined"
-      ? process.env.NEXT_PUBLIC_SHOWCASE_ID ?? ""
-      : "";
-  // compute once; the fetch effect below re-resolves anyway
-  const sharedId = useMemo(() => idFromQuery || idFromEnv, []);
-
+  const [showcase, setShowcase] = useState<ShowcaseProps>(initialShowcaseProps);
+  const [error, setError] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const sidebarWidth = sidebarOpen ? SIDEBAR_WIDTH : 0;
 
-  // Start with SSR-safe default (NO create, NO cache write here)
-  const [doc, setDoc] =
-    useState<ComponentRecord<ShowcaseProps>>(STABLE_DEFAULT_DOC);
-  const [error, setError] = useState<string | null>(null);
-
-  // Hydration guard
-  const hydratedOnceRef = useRef(false);
+  const fetchedOnce = useRef(false);
 
   useEffect(() => {
     setHydrated(true);
-    const cached = safeReadCache();
-    if (cached) setDoc(cached);
+    const cached = readShowcaseCache();
+    if (cached) setShowcase(cached);
   }, []);
 
   useEffect(() => {
-    if (hydratedOnceRef.current) return;
-    hydratedOnceRef.current = true;
+    if (fetchedOnce.current) return;
+    fetchedOnce.current = true;
 
     let alive = true;
 
     (async () => {
       try {
-        const urlParams =
-          typeof window !== "undefined"
-            ? new URLSearchParams(window.location.search)
-            : null;
-        const idFromQuery = urlParams?.get("doc") ?? "";
-        const idFromEnv =
-          typeof process !== "undefined"
-            ? process.env.NEXT_PUBLIC_SHOWCASE_ID ?? ""
-            : "";
-        const resolvedId = idFromQuery || idFromEnv;
+        const rows: TitleComponentRecord[] = await listTitles();
+        if (!alive) return;
 
-        if (!resolvedId) {
-          setError(
-            "No shared document id. Provide NEXT_PUBLIC_SHOWCASE_ID or ?doc=<id>."
-          );
-          return;
+        const next: ShowcaseProps = { titles: {} };
+        for (const rec of rows) {
+          next.titles[rec.id] = toTitleToken(rec);
         }
 
-        try {
-          const rec = await getComponent<ShowcaseProps>(resolvedId);
-          if (!alive) return;
-          setDoc(rec);
-          writeShowcaseCache(rec);
-          return;
-        } catch (e: unknown) {
-          // if 404 -> seeded id missing or wrong
-          const maybe = e as { code?: number; message?: string };
-          if (maybe?.code === 404) {
-            clearShowcaseCache();
-            if (!alive) return;
-            setError("The requested document was not found.");
-            return;
-          }
-          throw e; // rethrow non-404s
-        }
+        setShowcase(next);
+        writeShowcaseCache(next);
       } catch (e) {
         if (!alive) return;
-        setError(
-          e instanceof Error ? e.message : "Failed to load Showcase doc"
-        );
+        clearShowcaseCache();
+        setError(e instanceof Error ? e.message : "Failed to load titles");
       }
     })();
 
@@ -156,16 +82,12 @@ export default function EditorShell({ children }: PropsWithChildren) {
     };
   }, []);
 
-  // Write cache whenever doc changes locally
   useEffect(() => {
-    writeShowcaseCache(doc);
-  }, [doc]);
+    if (!hydrated) return;
+    writeShowcaseCache(showcase);
+  }, [showcase, hydrated]);
 
-  const value: Ctx = {
-    showcaseRecord: doc,
-    setShowcaseRecord: setDoc,
-    sharedId,
-  };
+  const value: Ctx = { showcase, setShowcase };
 
   return (
     <ShowcaseCtx.Provider value={value}>
@@ -212,10 +134,6 @@ export default function EditorShell({ children }: PropsWithChildren) {
             </button>
 
             <div className="px-4 text-[11px] text-white/50">
-              {/* 👇 prevent SSR/CSR mismatch for ID display */}
-              <span suppressHydrationWarning>
-                ID: {hydrated ? doc.id : STABLE_DEFAULT_DOC.id}
-              </span>
               {error ? (
                 <span className="ml-2 text-red-400">• {error}</span>
               ) : null}

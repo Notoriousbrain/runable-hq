@@ -2,8 +2,10 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { updateComponent } from "@/lib/api";
-import type { Json } from "@/types/json";
+import { updateTitle, type TitleComponentRecord } from "@/lib/api";
+import { writeShowcaseCache, readShowcaseCache } from "@/lib/cache";
+import type { ShowcaseProps, TitleToken } from "@/types";
+import { toTitleToken } from "@/lib/normalizers";
 
 function useLatest<T>(value: T) {
   const ref = useRef(value);
@@ -11,20 +13,19 @@ function useLatest<T>(value: T) {
   return ref;
 }
 
-type AutosaveData<TProps = Json> = {
-  sourceCode?: string;
-  props?: TProps;
-};
+type AutosaveData = Partial<TitleToken>;
 
-export function useAutosave<TProps = Json>({
+export function useAutosave({
   id,
+  key,
   data,
   enabled = true,
   delay = 1200,
   onSaved,
 }: {
   id: string;
-  data: AutosaveData<TProps>;
+  key: string;
+  data: AutosaveData;
   enabled?: boolean;
   delay?: number;
   onSaved?: (next: { updatedAt: string }) => void;
@@ -48,7 +49,6 @@ export function useAutosave<TProps = Json>({
 
   useEffect(() => {
     if (!enabled || !id) return;
-
     if (stablePayload === lastSentPayload.current) return;
 
     if (timer.current) window.clearTimeout(timer.current);
@@ -58,7 +58,17 @@ export function useAutosave<TProps = Json>({
         if (!mounted.current) return;
         setSaving(true);
 
-        const updated = await updateComponent<TProps>(id, data);
+        const updated: TitleComponentRecord = await updateTitle(id, data);
+
+        const cached = readShowcaseCache() || ({ titles: {} } as ShowcaseProps);
+        const next: ShowcaseProps = {
+          ...cached,
+          titles: {
+            ...cached.titles,
+            [key]: toTitleToken(updated),
+          },
+        };
+        writeShowcaseCache(next);
 
         lastSentPayload.current = stablePayload;
         onSavedRef.current?.({ updatedAt: updated.updatedAt });
@@ -68,7 +78,7 @@ export function useAutosave<TProps = Json>({
         if (mounted.current) setSaving(false);
       }
     }, delay);
-  }, [stablePayload, id, enabled, delay, onSavedRef]);
+  }, [stablePayload, id, key, enabled, delay, onSavedRef]);
 
   return { saving };
 }

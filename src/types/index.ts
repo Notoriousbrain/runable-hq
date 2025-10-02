@@ -2,7 +2,7 @@ export type TitleToken = {
   text: string;
   color: string;
   size: number;
-  weight: 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
+  weight: number;
 };
 
 export type ShowcaseProps = {

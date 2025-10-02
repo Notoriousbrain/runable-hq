@@ -11,11 +11,12 @@ import {
   Heart,
 } from "lucide-react";
 import ShowcaseCard from "./showcase-card";
-import { useShowcaseDoc } from "./editor-shell";
-import { ShowcaseProps } from "@/types";
-import { useAutosave } from "@/hooks/useAutosave";
-import TitleEditor from "../title-header";
-import { writeShowcaseCache } from "@/lib/cache";
+import { readShowcaseCache, writeShowcaseCache } from "@/lib/cache";
+import { useEffect, useState } from "react";
+import { getTitle, TitleComponentRecord, updateTitle } from "@/lib/api";
+import HeadingInlineEditor from "../editor-toolbar";
+
+const SHOWCASE_ID = "showcase-heading";
 
 const categories: ReadonlyArray<{
   icon: React.ReactNode;
@@ -93,47 +94,83 @@ const items = [
 ];
 
 export default function ShowcaseSection() {
-  const { showcaseRecord, setShowcaseRecord } = useShowcaseDoc();
+  const [rec, setRec] = useState<TitleComponentRecord | null>(null);
 
-  useAutosave<ShowcaseProps>({
-    id: showcaseRecord.id,
-    initialRev: showcaseRecord.rev,
-    data: { props: showcaseRecord.props },
-    enabled: true,
-    delay: 900,
-    onSaved: ({ rev }) =>
-      setShowcaseRecord((prev) => {
-        if (!prev) return prev as never;
-        const next = { ...prev, rev };
-        writeShowcaseCache(next);
-        return next;
-      }),
-    onConflict: ({ rev, props }) => {
-      setShowcaseRecord((prev) => {
-        if (!prev) return prev as never;
-        const next = { ...prev, rev, props: props as ShowcaseProps };
-        writeShowcaseCache(next); // ⬅️ write-through
-        return next;
-      });
-    },
-  });
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const cached = readShowcaseCache();
+      if (cached?.titles[SHOWCASE_ID] && !cancelled) {
+        const t = cached.titles[SHOWCASE_ID];
+        setRec({
+          id: SHOWCASE_ID,
+          text: t.text,
+          color: t.color,
+          size: t.size,
+          weight: t.weight,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        });
+      }
+      try {
+        const row = await getTitle(SHOWCASE_ID);
+        if (!cancelled) setRec(row);
+      } catch (e) {
+        console.error("Failed to fetch showcase title:", e);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
-  function onEdit(nextProps: ShowcaseProps) {
-    setShowcaseRecord((prev) => {
-      if (!prev) return prev as never;
-      const next = { ...prev, props: nextProps };
-      writeShowcaseCache(next);
-      return next;
+  async function onChange(
+    nextToken: Omit<TitleComponentRecord, "id" | "createdAt">
+  ) {
+    if (!rec) return;
+    const next: TitleComponentRecord = { ...rec, ...nextToken };
+    setRec(next);
+
+    writeShowcaseCache({
+      titles: {
+        [SHOWCASE_ID]: {
+          text: next.text,
+          color: next.color,
+          size: next.size,
+          weight: next.weight,
+        },
+      },
     });
+
+    try {
+      await updateTitle(SHOWCASE_ID, {
+        text: next.text,
+        color: next.color,
+        size: next.size,
+        weight: next.weight,
+      });
+    } catch (e) {
+      console.error("Update showcase title failed:", e);
+    }
   }
 
-  const p = showcaseRecord.props;
+  if (!rec) return null;
 
   return (
     <section className="mx-auto max-w-6xl px-4 my-12">
       <div className="relative flex items-center justify-center">
         <div className="hidden lg:flex h-px w-full bg-white/10" />
-        <TitleEditor token="showcase" value={p} onChange={onEdit} />
+        <HeadingInlineEditor
+          value={{
+            text: rec.text,
+            color: rec.color,
+            size: rec.size,
+            weight: rec.weight,
+          }}
+          onChange={(next) =>
+            onChange({ ...next, updatedAt: new Date().toISOString() })
+          }
+        />
         <div className="hidden lg:flex h-px w-full bg-white/10" />
       </div>
       <div className="mt-12 overflow-x-auto">

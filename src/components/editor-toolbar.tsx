@@ -11,11 +11,11 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
 import { PaintBucket, CaseUpper, Bold as BoldIcon } from "lucide-react";
-import type { TextToken } from "@/types";
+import type { TitleToken } from "@/types";
 
 type Props = {
-  value: TextToken;
-  onChange: (next: TextToken) => void;
+  value: TitleToken;
+  onChange: (next: TitleToken) => void;
   className?: string;
 };
 
@@ -28,16 +28,15 @@ export default function HeadingInlineEditor({
   const [openColor, setOpenColor] = useState(false);
   const [openSize, setOpenSize] = useState(false);
   const [openWeight, setOpenWeight] = useState(false);
-  const [localWeight, setLocalWeight] = useState<TextToken["weight"] | null>(
+  const [localWeight, setLocalWeight] = useState<TitleToken["weight"] | null>(
     null
   );
 
   const hRef = useRef<HTMLHeadingElement | null>(null);
   const popMainRef = useRef<HTMLDivElement | null>(null);
 
-  const [localText, setLocalText] = useState(value.title ?? "");
+  const [localText, setLocalText] = useState(value.text ?? "");
 
-  // ----- Color state -----
   const initialRGBA = useMemo(
     () => parseColorToRgba(value.color),
     [value.color]
@@ -54,12 +53,10 @@ export default function HeadingInlineEditor({
   )}, ${clamp(a, 0, 1)})`;
   const hexString = rgbToHex(r, g, b);
 
-  // Keep text in sync when not editing
   useEffect(() => {
-    if (!editing) setLocalText(value.title ?? "");
-  }, [value.title, editing]);
+    if (!editing) setLocalText(value.text ?? "");
+  }, [value.text, editing]);
 
-  // Sync color changes from props
   useEffect(() => {
     const next = parseColorToRgba(value.color);
     setR(next.r);
@@ -68,7 +65,6 @@ export default function HeadingInlineEditor({
     setA(next.a);
   }, [value.color]);
 
-  // Move caret to end helper
   function moveCaretToEnd(el: HTMLElement) {
     const range = document.createRange();
     range.selectNodeContents(el);
@@ -78,7 +74,6 @@ export default function HeadingInlineEditor({
     sel?.addRange(range);
   }
 
-  // Focus & caret on edit enter
   useLayoutEffect(() => {
     if (!editing) return;
     const el = hRef.current;
@@ -88,7 +83,6 @@ export default function HeadingInlineEditor({
     requestAnimationFrame(() => moveCaretToEnd(el));
   }, [editing, localText]);
 
-  // Click-away to stop editing
   useEffect(() => {
     if (!editing) return;
     const onDown = (e: MouseEvent) => {
@@ -106,7 +100,6 @@ export default function HeadingInlineEditor({
     return () => document.removeEventListener("mousedown", onDown);
   }, [editing]);
 
-  // ----- Apply handlers -----
   function applyColor(next: {
     r?: number;
     g?: number;
@@ -137,17 +130,16 @@ export default function HeadingInlineEditor({
 
   function applySize(px: number[]) {
     const raw = Array.isArray(px) ? px[0] : Number(px);
-    const n = clamp(Number.isFinite(raw) ? raw : value.fontSize ?? 20, 10, 128);
-    onChange({ ...value, fontSize: n });
+    const n = clamp(Number.isFinite(raw) ? raw : value.size ?? 20, 10, 128);
+    onChange({ ...value, size: n });
   }
 
-  const currentWeight: TextToken["weight"] = localWeight ?? value.weight;
-  function setWeight(w: TextToken["weight"]) {
+  const currentWeight: TitleToken["weight"] = localWeight ?? value.weight;
+  function setWeight(w: TitleToken["weight"]) {
     setLocalWeight(w);
     onChange({ ...value, weight: w });
   }
 
-  // Insert plain text at caret
   function insertAtCaret(text: string) {
     const sel = window.getSelection();
     if (!sel || sel.rangeCount === 0) return;
@@ -158,7 +150,6 @@ export default function HeadingInlineEditor({
 
   return (
     <>
-      {/* Main popover anchored to heading */}
       <Popover open={editing}>
         <PopoverAnchor asChild>
           <h2
@@ -184,20 +175,20 @@ export default function HeadingInlineEditor({
               if (el) {
                 const t = el.innerText;
                 setLocalText(t);
-                onChange({ ...value, title: t.trim().replace(/\s+/g, " ") });
+                onChange({ ...value, text: t.trim().replace(/\s+/g, " ") });
               }
             }}
             onInput={(e) => {
               const t = (e.target as HTMLElement).innerText;
               setLocalText(t);
-              onChange({ ...value, title: t.trim().replace(/\s+/g, " ") });
+              onChange({ ...value, text: t.trim().replace(/\s+/g, " ") });
             }}
             onKeyDown={(e) => {
               if (e.key === "Enter") e.preventDefault();
             }}
             style={{
               color: value.color,
-              fontSize: value.fontSize,
+              fontSize: value.size,
               fontWeight: currentWeight,
               cursor: "text",
               boxShadow: editing
@@ -211,7 +202,6 @@ export default function HeadingInlineEditor({
           </h2>
         </PopoverAnchor>
 
-        {/* Toolbar inside main popover */}
         {editing && (
           <PopoverContent
             ref={popMainRef}
@@ -233,11 +223,6 @@ export default function HeadingInlineEditor({
                 }}
                 variant="secondary"
                 className="cursor-pointer text-xs px-2.5 py-1.5 rounded-full text-white bg-white/10 hover:bg-white/15 transition inline-flex items-center"
-                style={{
-                  border: openColor
-                    ? "1px solid rgba(255,255,255,0.3)"
-                    : "1px solid transparent",
-                }}
               >
                 <PaintBucket className="mr-1 h-3.5 w-3.5" />
                 Color
@@ -251,11 +236,6 @@ export default function HeadingInlineEditor({
                 }}
                 variant="secondary"
                 className="cursor-pointer text-xs px-2.5 py-1.5 rounded-full text-white bg-white/10 hover:bg-white/15 transition inline-flex items-center"
-                style={{
-                  border: openSize
-                    ? "1px solid rgba(255,255,255,0.3)"
-                    : "1px solid transparent",
-                }}
               >
                 <CaseUpper className="mr-1 h-3.5 w-3.5" />
                 Size
@@ -269,11 +249,6 @@ export default function HeadingInlineEditor({
                 }}
                 variant="secondary"
                 className="cursor-pointer text-xs px-2.5 py-1.5 rounded-full text-white bg-white/10 hover:bg-white/15 transition inline-flex items-center"
-                style={{
-                  border: openWeight
-                    ? "1px solid rgba(255,255,255,0.3)"
-                    : "1px solid transparent",
-                }}
               >
                 <BoldIcon className="mr-1 h-3.5 w-3.5" />
                 Weight
@@ -283,7 +258,6 @@ export default function HeadingInlineEditor({
         )}
       </Popover>
 
-      {/* COLOR POPOVER */}
       <Popover open={openColor} onOpenChange={setOpenColor}>
         <PopoverAnchor asChild>
           <span />
@@ -356,7 +330,6 @@ export default function HeadingInlineEditor({
         </PopoverContent>
       </Popover>
 
-      {/* SIZE POPOVER */}
       <Popover open={openSize} onOpenChange={setOpenSize}>
         <PopoverAnchor asChild>
           <span />
@@ -377,7 +350,7 @@ export default function HeadingInlineEditor({
             <span>Font size</span>
             <Input
               type="number"
-              value={Math.round(value.fontSize ?? 20)}
+              value={Math.round(value.size ?? 20)}
               min={10}
               max={128}
               className="h-7 w-16"
@@ -386,7 +359,7 @@ export default function HeadingInlineEditor({
           </div>
           <div className="mt-2">
             <Slider
-              value={[Math.round(value.fontSize ?? 20)]}
+              value={[Math.round(value.size ?? 20)]}
               min={10}
               max={128}
               step={1}
@@ -396,7 +369,6 @@ export default function HeadingInlineEditor({
         </PopoverContent>
       </Popover>
 
-      {/* WEIGHT POPOVER */}
       <Popover open={openWeight} onOpenChange={setOpenWeight}>
         <PopoverAnchor asChild>
           <span />
@@ -411,8 +383,8 @@ export default function HeadingInlineEditor({
         >
           <div className="text-xs text-white/80 mb-2">Font weight</div>
           <div className="grid grid-cols-4 gap-2">
-            {([400, 500, 600, 700] as const).map((w) => {
-              const active = currentWeight === w;
+            {[400, 500, 600, 700].map((w) => {
+              const active = (currentWeight ?? 400) === w;
               return (
                 <Button
                   key={w}
@@ -433,7 +405,6 @@ export default function HeadingInlineEditor({
   );
 }
 
-/* ---------- helpers ---------- */
 function clamp(n: number, min: number, max: number) {
   return Math.min(max, Math.max(min, n));
 }

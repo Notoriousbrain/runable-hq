@@ -1,4 +1,3 @@
-// src/components/hero-section.tsx
 "use client";
 
 import {
@@ -12,10 +11,9 @@ import React, { useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import ActionCard from "./action-card";
-import type { ShowcaseProps } from "@/types";
-import TitleEditor from "../title-header";
-import { writeShowcaseCache } from "@/lib/cache";
-import { ComponentRecord, getComponent, updateComponent } from "@/lib/api";
+import { readShowcaseCache, writeShowcaseCache } from "@/lib/cache";
+import { getTitle, TitleComponentRecord, updateTitle } from "@/lib/api";
+import HeadingInlineEditor from "../editor-toolbar";
 
 const LANDING_ID = "landing-heading";
 
@@ -51,20 +49,30 @@ const HeroSection = () => {
     },
   ];
 
-  const [landingRec, setLandingRec] =
-    useState<ComponentRecord<ShowcaseProps> | null>(null);
+  const [landing, setLanding] = useState<TitleComponentRecord | null>(null);
 
-  // Fetch the single, seeded component (no creation here)
   useEffect(() => {
     let cancelled = false;
     (async () => {
       try {
-        const landing = await getComponent<ShowcaseProps>(LANDING_ID);
-        if (!cancelled) {
-          setLandingRec(landing);
+        const cached = readShowcaseCache();
+        if (cached?.titles[LANDING_ID] && !cancelled) {
+          const t = cached.titles[LANDING_ID];
+          setLanding({
+            id: LANDING_ID,
+            text: t.text,
+            color: t.color,
+            size: t.size,
+            weight: t.weight,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          });
         }
+
+        const rec = await getTitle(LANDING_ID);
+        if (!cancelled) setLanding(rec);
       } catch (e) {
-        console.error("Failed to fetch seeded components:", e);
+        console.error("Failed to fetch landing title:", e);
       }
     })();
     return () => {
@@ -72,28 +80,52 @@ const HeroSection = () => {
     };
   }, []);
 
-  function onEditLanding(nextProps: ShowcaseProps) {
-    setLandingRec((prev) => {
-      if (!prev) return prev;
-      const next = { ...prev, props: nextProps };
-      writeShowcaseCache(next);
-      updateComponent(prev.id, { props: nextProps }).catch((e) =>
-        console.error("Update (landing) failed:", e)
-      );
-      return next;
-    });
+  async function onEditLanding(next: TitleComponentRecord) {
+    setLanding(next);
+    const payload = {
+      titles: {
+        [LANDING_ID]: {
+          text: next.text,
+          color: next.color,
+          size: next.size,
+          weight: next.weight,
+        },
+      },
+    };
+    writeShowcaseCache(payload);
+
+    try {
+      await updateTitle(next.id, {
+        text: next.text,
+        color: next.color,
+        size: next.size,
+        weight: next.weight,
+      });
+    } catch (e) {
+      console.error("Update landing title failed:", e);
+    }
   }
-  if (!landingRec) return null;
+
+  if (!landing) return null;
 
   return (
     <div className="mx-auto max-w-6xl min-h-[calc(100dvh-200px)] px-4 flex justify-center items-center">
       <div className="w-full">
-        {/* Main title (landing token) */}
         <div className="mb-6 text-center">
-          <TitleEditor
-            token="landing"
-            value={landingRec.props}
-            onChange={onEditLanding}
+          <HeadingInlineEditor
+            value={{
+              text: landing.text,
+              color: landing.color,
+              size: landing.size,
+              weight: landing.weight,
+            }}
+            onChange={(next) =>
+              onEditLanding({
+                ...landing,
+                ...next,
+                updatedAt: new Date().toISOString(),
+              })
+            }
           />
         </div>
 

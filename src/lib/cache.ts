@@ -1,10 +1,8 @@
-// lib/cache.ts
-import type { ComponentRecord } from "@/lib/api";
 import type { ShowcaseProps } from "@/types";
 
-export const CACHE_KEY = "runable.showcase.cache";
+export const CACHE_KEY = "runable.title.cache";
 
-export function writeShowcaseCache(next: ComponentRecord<ShowcaseProps>) {
+export function writeShowcaseCache(next: ShowcaseProps) {
   if (typeof window === "undefined") return;
   try {
     localStorage.setItem(CACHE_KEY, JSON.stringify(next));
@@ -17,19 +15,18 @@ export function readShowcaseCache(): ShowcaseProps | null {
     const raw = localStorage.getItem(CACHE_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw);
-
-    // If it's a ComponentRecord, return only props
-    if (parsed && typeof parsed === "object" && "props" in parsed) {
-      return parsed.props as ShowcaseProps;
-    }
-
-    // If it's already ShowcaseProps
-    if (parsed && typeof parsed === "object" && "tokens" in parsed) {
+    if (parsed && typeof parsed === "object" && "titles" in parsed) {
       return parsed as ShowcaseProps;
     }
-
     return null;
   } catch {
     return null;
   }
+}
+
+export function clearShowcaseCache() {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.removeItem(CACHE_KEY);
+  } catch {}
 }

@@ -1,13 +1,13 @@
-import type { ShowcaseProps } from "@/types";
+import type { TitleToken } from "@/types";
 
-export type ComponentRecord<TProps = ShowcaseProps> = {
+export type TitleComponentRecord = {
   id: string;
-  name: string;
-  sourceCode: string;
-  props: TProps;
+  text: string;
+  color: string;
+  size: number;
+  weight: number;
   createdAt: string;
   updatedAt: string;
-  schemaVer?: number;
 };
 
 export type ApiError = Error & {
@@ -33,41 +33,39 @@ async function json<T>(res: Response): Promise<T> {
   return res.json() as Promise<T>;
 }
 
-export async function getComponent<TProps = ShowcaseProps>(id: string) {
-  const res = await fetch(`/api/components/${encodeURIComponent(id)}`, {
-    cache: "no-store",
-  });
-  return json<ComponentRecord<TProps>>(res);
+export async function listTitles() {
+  const res = await fetch(`/api/title`, { cache: "no-store" });
+  return json<TitleComponentRecord[]>(res);
 }
 
-export async function createOrGetComponent<TProps = ShowcaseProps>(input: {
-  id: string;
-  name?: string;
-  sourceCode?: string;
-  props?: TProps;
-  schemaVer?: number;
-}) {
-  const res = await fetch(`/api/components`, {
+export async function getTitle(id: string) {
+  const res = await fetch(`/api/title/${encodeURIComponent(id)}`, {
+    cache: "no-store",
+  });
+  return json<TitleComponentRecord>(res);
+}
+
+export async function createTitle(input: TitleToken) {
+  const res = await fetch(`/api/title`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(input),
   });
-  return json<ComponentRecord<TProps>>(res);
+  return json<TitleComponentRecord>(res);
 }
 
-export async function updateComponent<TProps = ShowcaseProps>(
-  id: string,
-  data: {
-    name?: string;
-    sourceCode?: string;
-    props?: TProps;
-    schemaVer?: number;
-  }
-) {
-  const res = await fetch(`/api/components/${encodeURIComponent(id)}`, {
+export async function updateTitle(id: string, data: Partial<TitleToken>) {
+  const res = await fetch(`/api/title/${encodeURIComponent(id)}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
-  return json<ComponentRecord<TProps>>(res);
+  return json<TitleComponentRecord>(res);
+}
+
+export async function deleteTitle(id: string) {
+  const res = await fetch(`/api/title/${encodeURIComponent(id)}`, {
+    method: "DELETE",
+  });
+  return json<{ success: boolean }>(res);
 }
