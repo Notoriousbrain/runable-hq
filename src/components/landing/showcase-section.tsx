@@ -11,10 +11,7 @@ import {
   Heart,
 } from "lucide-react";
 import ShowcaseCard from "./showcase-card";
-import { readShowcaseCache, writeShowcaseCache } from "@/lib/cache";
-import { useEffect, useState } from "react";
-import { getTitle, TitleComponentRecord, updateTitle } from "@/lib/api";
-import HeadingInlineEditor from "../editor-toolbar";
+import SharedTitle from "../shared-title";
 
 const SHOWCASE_ID = "showcase-heading";
 
@@ -94,83 +91,13 @@ const items = [
 ];
 
 export default function ShowcaseSection() {
-  const [rec, setRec] = useState<TitleComponentRecord | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      const cached = readShowcaseCache();
-      if (cached?.titles[SHOWCASE_ID] && !cancelled) {
-        const t = cached.titles[SHOWCASE_ID];
-        setRec({
-          id: SHOWCASE_ID,
-          text: t.text,
-          color: t.color,
-          size: t.size,
-          weight: t.weight,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        });
-      }
-      try {
-        const row = await getTitle(SHOWCASE_ID);
-        if (!cancelled) setRec(row);
-      } catch (e) {
-        console.error("Failed to fetch showcase title:", e);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  async function onChange(
-    nextToken: Omit<TitleComponentRecord, "id" | "createdAt">
-  ) {
-    if (!rec) return;
-    const next: TitleComponentRecord = { ...rec, ...nextToken };
-    setRec(next);
-
-    writeShowcaseCache({
-      titles: {
-        [SHOWCASE_ID]: {
-          text: next.text,
-          color: next.color,
-          size: next.size,
-          weight: next.weight,
-        },
-      },
-    });
-
-    try {
-      await updateTitle(SHOWCASE_ID, {
-        text: next.text,
-        color: next.color,
-        size: next.size,
-        weight: next.weight,
-      });
-    } catch (e) {
-      console.error("Update showcase title failed:", e);
-    }
-  }
-
-  if (!rec) return null;
-
   return (
     <section className="mx-auto max-w-6xl px-4 my-12">
       <div className="relative flex items-center justify-center">
         <div className="hidden lg:flex h-px w-full bg-white/10" />
-        <HeadingInlineEditor
-          value={{
-            text: rec.text,
-            color: rec.color,
-            size: rec.size,
-            weight: rec.weight,
-          }}
-          onChange={(next) =>
-            onChange({ ...next, updatedAt: new Date().toISOString() })
-          }
-        />
+        <div className="w-full">
+          <SharedTitle id={SHOWCASE_ID} />
+        </div>
         <div className="hidden lg:flex h-px w-full bg-white/10" />
       </div>
       <div className="mt-12 overflow-x-auto">
