@@ -30,3 +30,11 @@ export function clearShowcaseCache() {
     localStorage.removeItem(CACHE_KEY);
   } catch {}
 }
+
+export function clearLocalCaches() {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.removeItem("runable.showcase.cache");
+    localStorage.removeItem(CACHE_KEY);
+  } catch {}
+}

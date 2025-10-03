@@ -2,6 +2,7 @@
 
 import { Badge } from "../ui/badge";
 import SharedTitle from "../shared-title";
+import ResetButton from "../reset-button";
 
 export default function Topbar() {
   return (
@@ -40,7 +41,7 @@ export default function Topbar() {
           <span>|</span>
           <span className="text-[#5193cd] font-bold inline-block min-w-[3.25rem]">
             <SharedTitle
-              id="landing-upgrade-button"
+              id="navbar-upgrade-button"
               skeletonClassName="h-4 w-12"
             />
           </span>
